@@ -64,6 +64,7 @@
                 <button id="btn-type-ingreso" onclick="setFormType('ingreso')" class="flex-1 py-2 rounded-xl font-bold text-sm text-slate-400">INGRESO</button>
             </div>
             <form id="main-form" class="space-y-4">
+                <input type="hidden" id="f-index">
                 <input type="number" id="f-amount" placeholder="0.00" step="0.01" class="w-full rounded-2xl h-14 px-4 bg-slate-50 font-black text-3xl text-center" required>
                 <div class="grid grid-cols-2 gap-2">
                     <select id="f-category" class="rounded-2xl h-12 px-4 bg-slate-50 text-sm font-medium border-none"></select>
@@ -102,7 +103,8 @@
             try {
                 const res = await fetch(SCRIPT_URL + '?action=getGastos');
                 const data = await res.json();
-                state.expenses = data.map(r => ({
+                state.expenses = data.map((r, idx) => ({
+                    id: idx + 2, // Fila en el sheet
                     date: new Date(r[0]), desc: r[1], amount: parseFloat(r[2]), 
                     cat: r[3], user: r[4], shared: r[5] === 'Sí', 
                     type: r[6] || 'gasto', account: r[7] || 'Efectivo'
@@ -116,10 +118,14 @@
         async function handleForm(e) {
             e.preventDefault();
             const btn = document.getElementById('f-submit');
+            const editId = document.getElementById('f-index').value;
             btn.disabled = true; btn.innerText = "Guardando...";
+
             const payload = {
+                action: editId ? 'edit' : 'add',
+                row: editId,
                 fecha: new Date().toLocaleDateString('es-ES'),
-                desc: document.getElementById('f-desc').value || (currentType === 'gasto' ? 'Gasto' : 'Ingreso'),
+                desc: document.getElementById('f-desc').value,
                 monto: parseFloat(document.getElementById('f-amount').value),
                 cat: document.getElementById('f-category').value,
                 quien: currentUser.name,
@@ -127,11 +133,27 @@
                 tipo: currentType,
                 cuenta: document.getElementById('f-account').value
             };
+
             try {
                 await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-                closeModal(); await syncData();
+                closeModal();
+                await syncData();
             } catch (e) { alert("Error"); }
             btn.disabled = false; btn.innerText = "CONFIRMAR";
+        }
+
+        function editEntry(id) {
+            const entry = state.expenses.find(e => e.id == id);
+            if(!entry) return;
+            openModal();
+            document.getElementById('f-index').value = entry.id;
+            document.getElementById('f-amount').value = entry.amount;
+            document.getElementById('f-desc').value = entry.desc;
+            document.getElementById('f-category').value = entry.cat;
+            document.getElementById('f-account').value = entry.account;
+            document.getElementById('f-shared').checked = entry.shared;
+            setFormType(entry.type);
+            document.getElementById('f-submit').innerText = "ACTUALIZAR";
         }
 
         function renderView(viewId) {
@@ -148,77 +170,86 @@
                     const d = e.amount/2; e.user === state.users[0].name ? bal += d : bal -= d;
                 });
                 container.innerHTML = `
-                    <div class="bg-white p-6 rounded-[32px] shadow-sm mb-6">
+                    <div class="bg-white p-6 rounded-[32px] shadow-sm mb-6 border border-slate-50">
                         <div class="flex justify-between items-center mb-6">
                             <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Disponible</p><h2 class="text-4xl font-black text-slate-800">$ ${(ing - gas).toFixed(0)}</h2></div>
                             <div class="text-right"><p class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Ingresos</p><p class="font-bold text-sm text-emerald-600">+$ ${ing.toFixed(0)}</p></div>
                         </div>
                         <div class="bg-indigo-600 p-4 rounded-2xl text-white text-center shadow-lg">
-                            <p class="text-[10px] font-bold opacity-70 uppercase mb-1 tracking-widest">Balance Pareja</p>
+                            <p class="text-[10px] font-bold opacity-70 uppercase mb-1 tracking-widest">Estado Pareja</p>
                             <p class="text-sm font-bold">${bal === 0 ? '🎉 Estás al día' : (bal > 0 ? `Bruno le debe $${bal.toFixed(0)} a Lu` : `Lu le debe $${Math.abs(bal).toFixed(0)} a Bruno`)}</p>
                         </div>
                     </div>
                     <div class="space-y-3">${vis.slice(-5).reverse().map(e => `
-                        <div class="bg-white p-4 rounded-2xl flex justify-between items-center shadow-sm">
-                            <div><p class="font-bold text-sm">${e.desc}</p><p class="text-[9px] text-slate-400 font-bold uppercase">${e.user} · ${e.cat}</p></div>
+                        <div onclick="editEntry(${e.id})" class="bg-white p-4 rounded-2xl flex justify-between items-center shadow-sm active:bg-slate-50 transition-colors">
+                            <div><p class="font-bold text-sm text-slate-700">${e.desc}</p><p class="text-[9px] text-slate-400 font-bold uppercase">${e.user} · ${e.cat}</p></div>
                             <p class="font-bold text-sm ${e.type==='ingreso'?'text-emerald-500':'text-slate-800'}">${e.type==='ingreso'?'+':'-'} $${e.amount.toFixed(0)}</p>
                         </div>`).join('')}</div>`;
+            }
+
+            if (viewId === 'joint') {
+                const total = state.expenses.filter(e => e.type === 'gasto' && e.date.getMonth() === (new Date()).getMonth()).reduce((s,e) => s + e.amount, 0);
+                const disponible = state.budget - total;
+                const perc = Math.min((total / state.budget) * 100, 100);
+                container.innerHTML = `
+                    <h1 class="text-2xl font-black mb-6">Pareja</h1>
+                    <div class="bg-white p-6 rounded-[32px] shadow-sm border border-slate-50">
+                        <h3 class="text-[10px] font-bold text-slate-400 uppercase mb-6 tracking-widest">Presupuesto Mensual</h3>
+                        <div class="grid grid-cols-2 gap-4 mb-6 text-center">
+                            <div class="p-4 bg-slate-50 rounded-2xl"><p class="text-[9px] font-bold text-slate-400 uppercase mb-1">Máximo</p><p class="text-xl font-black text-slate-700">$ ${state.budget}</p></div>
+                            <div class="p-4 ${disponible < 0 ? 'bg-red-50' : 'bg-emerald-50'} rounded-2xl"><p class="text-[9px] font-bold ${disponible < 0 ? 'text-red-400' : 'text-emerald-500'} uppercase mb-1">Disponible</p><p class="text-xl font-black ${disponible < 0 ? 'text-red-600' : 'text-emerald-600'}">$ ${disponible.toFixed(0)}</p></div>
+                        </div>
+                        <div class="flex justify-between items-end mb-2 text-[10px] font-bold text-slate-400 uppercase"><span>Gasto: $ ${total.toFixed(0)}</span><span>${perc.toFixed(0)}%</span></div>
+                        <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden"><div class="bg-indigo-500 h-full transition-all duration-1000" style="width: ${perc}%"></div></div>
+                    </div>`;
             }
 
             if (viewId === 'settings') {
                 container.innerHTML = `
                     <h1 class="text-2xl font-black mb-6">Ajustes</h1>
-                    <div class="bg-white p-6 rounded-[32px] shadow-sm mb-4">
+                    <div class="bg-white p-6 rounded-[32px] shadow-sm mb-4 border border-slate-50">
                         <h3 class="font-bold text-sm mb-4 italic text-indigo-600">Mis Cuentas y Bancos</h3>
                         <div id="acc-list" class="space-y-2 mb-4"></div>
-                        <div class="flex gap-2"><input id="new-acc" placeholder="Ej: Santander" class="flex-1 bg-slate-50 rounded-xl px-4 text-sm h-11 border-none"><button onclick="addAcc()" class="bg-indigo-600 text-white px-4 rounded-xl font-bold text-sm">AÑADIR</button></div>
+                        <div class="flex gap-2"><input id="new-acc" placeholder="Ej: Santander" class="flex-1 bg-slate-50 rounded-xl px-4 text-sm h-11 border-none focus:ring-2 focus:ring-indigo-100 outline-none"><button onclick="addAcc()" class="bg-indigo-600 text-white px-4 rounded-xl font-bold text-sm">AÑADIR</button></div>
                     </div>
-                    <div class="bg-white p-6 rounded-[32px] shadow-sm mb-4">
+                    <div class="bg-white p-6 rounded-[32px] shadow-sm mb-4 border border-slate-50">
                         <h3 class="font-bold text-sm mb-4 italic text-indigo-600">Gastos Recurrentes</h3>
                         <div id="rec-list" class="space-y-2 mb-4"></div>
                         <div class="space-y-2">
-                            <input id="rec-desc" placeholder="Nombre (ej: Alquiler)" class="w-full bg-slate-50 rounded-xl px-4 text-sm h-11 border-none">
-                            <div class="flex gap-2"><input id="rec-amt" type="number" placeholder="Monto" class="flex-1 bg-slate-50 rounded-xl px-4 text-sm h-11 border-none"><button onclick="addRec()" class="bg-indigo-600 text-white px-4 rounded-xl font-bold text-sm">OK</button></div>
+                            <input id="rec-desc" placeholder="Nombre (ej: Alquiler)" class="w-full bg-slate-50 rounded-xl px-4 text-sm h-11 border-none outline-none">
+                            <div class="flex gap-2"><input id="rec-amt" type="number" placeholder="Monto" class="flex-1 bg-slate-50 rounded-xl px-4 text-sm h-11 border-none outline-none"><button onclick="addRec()" class="bg-indigo-600 text-white px-4 rounded-xl font-bold text-sm">OK</button></div>
                         </div>
                     </div>
-                    <div class="bg-white p-6 rounded-[32px] shadow-sm mb-6">
-                        <h3 class="font-bold text-sm mb-4 italic text-indigo-600">Presupuesto Pareja</h3>
-                        <input type="number" id="budget-in" value="${state.budget}" onchange="state.budget=this.value;saveState()" class="w-full bg-slate-50 rounded-xl px-4 h-11 border-none font-bold">
+                    <div class="bg-white p-6 rounded-[32px] shadow-sm mb-6 border border-slate-50">
+                        <h3 class="font-bold text-sm mb-4 italic text-indigo-600">Máximo Presupuesto Pareja</h3>
+                        <input type="number" id="budget-in" value="${state.budget}" onchange="state.budget=this.value;saveState()" class="w-full bg-slate-50 rounded-xl px-4 h-11 border-none font-bold outline-none focus:ring-2 focus:ring-indigo-100">
                     </div>
                     <button onclick="logout()" class="w-full text-red-500 font-bold p-4 bg-red-50 rounded-2xl uppercase text-[10px] tracking-widest">Cerrar Sesión</button>`;
                 renderAccs(); renderRecs();
             }
             if (viewId === 'transactions') setTxTab(txTab);
-            if (viewId === 'joint') {
-                const total = state.expenses.filter(e => e.type === 'gasto' && e.date.getMonth() === (new Date()).getMonth()).reduce((s,e) => s + e.amount, 0);
-                const perc = Math.min((total / state.budget) * 100, 100);
-                container.innerHTML = `
-                    <h1 class="text-2xl font-black mb-6">Pareja</h1>
-                    <div class="bg-white p-6 rounded-[32px] shadow-sm">
-                        <h3 class="text-[10px] font-bold text-slate-400 uppercase mb-4 tracking-widest">Gasto Mensual Pareja</h3>
-                        <div class="flex justify-between items-end mb-2"><span class="text-3xl font-black text-indigo-600">$ ${total.toFixed(0)}</span><span class="text-xs font-bold text-slate-400">Meta: $ ${state.budget}</span></div>
-                        <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden"><div class="bg-indigo-500 h-full" style="width: ${perc}%"></div></div>
-                    </div>`;
-            }
         }
 
         window.addAcc = () => { const n = document.getElementById('new-acc').value; if(n){ state.accounts.push(n); saveState(); renderAccs(); document.getElementById('new-acc').value=''; } };
         window.renderAccs = () => { document.getElementById('acc-list').innerHTML = state.accounts.map((a,i)=>`<div class="flex justify-between items-center bg-slate-50 p-3 rounded-xl"><span class="text-sm font-medium">${a}</span><button onclick="state.accounts.splice(${i},1);saveState();renderAccs()" class="text-red-400 text-xs font-bold uppercase">Eliminar</button></div>`).join(''); };
         window.addRec = () => { const d = document.getElementById('rec-desc').value, a = document.getElementById('rec-amt').value; if(d&&a){ state.recurring.push({desc:d, amount:a}); saveState(); renderRecs(); document.getElementById('rec-desc').value=''; document.getElementById('rec-amt').value=''; } };
         window.renderRecs = () => { document.getElementById('rec-list').innerHTML = state.recurring.map((r,i)=>`<div class="flex justify-between items-center bg-slate-50 p-3 rounded-xl"><span class="text-sm font-medium">${r.desc} ($${r.amount})</span><button onclick="state.recurring.splice(${i},1);saveState();renderRecs()" class="text-red-400 text-xs font-bold uppercase">Eliminar</button></div>`).join(''); };
+        
         window.setFormType = (t) => {
             currentType = t;
             document.getElementById('btn-type-gasto').className = t==='gasto' ? 'flex-1 py-2 rounded-xl font-bold text-sm bg-white shadow-sm text-indigo-600' : 'flex-1 py-2 rounded-xl font-bold text-sm text-slate-400 text-center';
             document.getElementById('btn-type-ingreso').className = t==='ingreso' ? 'flex-1 py-2 rounded-xl font-bold text-sm bg-white shadow-sm text-emerald-500' : 'flex-1 py-2 rounded-xl font-bold text-sm text-slate-400 text-center';
             document.getElementById('shared-container').style.display = t==='ingreso' ? 'none' : 'flex';
         };
+
         window.setTxTab = (t) => {
             txTab = t; document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.id === `tab-${t}`));
             const content = document.getElementById('transactions-content'), vis = getVisible();
             content.innerHTML = '';
-            if(t==='daily') vis.slice().sort((a,b)=>b.date-a.date).forEach(e => content.innerHTML += `<div class="bg-white p-4 rounded-2xl flex justify-between items-center shadow-sm"><div><p class="font-bold text-sm">${e.desc}</p><p class="text-[9px] text-slate-400 uppercase font-bold">${e.date.toLocaleDateString()}</p></div><p class="font-bold text-sm ${e.type==='ingreso'?'text-emerald-500':''}">${e.type==='ingreso'?'+':'-'} $${e.amount.toFixed(0)}</p></div>`);
+            if(t==='daily') vis.slice().sort((a,b)=>b.date-a.date).forEach(e => content.innerHTML += `<div onclick="editEntry(${e.id})" class="bg-white p-4 rounded-2xl flex justify-between items-center shadow-sm"><div><p class="font-bold text-sm text-slate-700">${e.desc}</p><p class="text-[9px] text-slate-400 uppercase font-bold">${e.date.toLocaleDateString()}</p></div><p class="font-bold text-sm ${e.type==='ingreso'?'text-emerald-500':''}">${e.type==='ingreso'?'+':'-'} $${e.amount.toFixed(0)}</p></div>`);
             else { const m = {}; vis.forEach(e => { const k = e.date.getMonth(); m[k] = (m[k]||0) + (e.type==='ingreso'?e.amount:-e.amount); }); Object.keys(m).sort((a,b)=>b-a).forEach(k => content.innerHTML += `<div class="bg-white p-4 rounded-2xl flex justify-between mb-2 shadow-sm"><span class="font-bold text-sm">Mes ${parseInt(k)+1}</span><span class="font-bold text-indigo-600">$ ${m[k].toFixed(0)}</span></div>`); }
         };
+
         function getVisible() { return state.expenses.filter(e => e.shared || e.user === currentUser.name); }
         function renderCurrentView() { const active = document.querySelector('.nav-btn.active'); if(active) renderView(active.dataset.view); }
         function saveState() { localStorage.setItem('cc_state', JSON.stringify(state)); }
@@ -227,7 +258,7 @@
             document.getElementById('f-account').innerHTML = state.accounts.map(a => `<option>${a}</option>`).join('');
             document.getElementById('add-modal').classList.add('active');
         }
-        function closeModal() { document.getElementById('add-modal').classList.remove('active'); document.getElementById('main-form').reset(); }
+        function closeModal() { document.getElementById('add-modal').classList.remove('active'); document.getElementById('main-form').reset(); document.getElementById('f-index').value = ''; document.getElementById('f-submit').innerText = "CONFIRMAR"; }
         function logout() { localStorage.clear(); location.reload(); }
 
         document.addEventListener('DOMContentLoaded', () => {
