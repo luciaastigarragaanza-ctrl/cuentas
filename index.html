@@ -6,7 +6,6 @@
     <title>Cuentas Claras</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2845/2845705.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -15,8 +14,7 @@
         .view.active { display: block; }
         .tab-btn.active { border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: bold; }
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; border-top: 1px solid #e2e8f0; z-index: 40; background: white; padding-bottom: env(safe-area-inset-bottom); }
-        .nav-btn.active svg { color: #4f46e5; }
-        .nav-btn.active span { color: #4f46e5; font-weight: bold; }
+        .nav-btn.active svg, .nav-btn.active span { color: #4f46e5; font-weight: bold; }
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 50; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; }
         .modal-overlay.active { display: flex; opacity: 1; }
     </style>
@@ -31,16 +29,17 @@
     <div id="main-app-view" class="hidden">
         <div class="container mx-auto p-4 max-w-2xl pb-32">
             <header class="flex justify-between items-center mb-6">
-                <h2 id="welcome-header" class="text-xl font-bold"></h2>
-                <div class="flex gap-2">
-                    <button onclick="syncData()" class="text-[10px] bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded-full font-bold">SINCRONIZAR</button>
-                </div>
+                <h2 id="welcome-header" class="text-xl font-bold text-gray-800"></h2>
+                <button onclick="syncData()" id="sync-btn" class="text-[10px] bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded-full font-bold uppercase tracking-wider">Sincronizar</button>
             </header>
 
             <div id="dashboard-view" class="view active"></div>
             <div id="transactions-view" class="view">
-                <div class="flex border-b mb-4"><button onclick="setTxTab('daily')" id="tab-daily" class="tab-btn flex-1 py-3 text-xs uppercase">Diario</button><button onclick="setTxTab('calendar')" id="tab-calendar" class="tab-btn flex-1 py-3 text-xs uppercase">Calendario</button><button onclick="setTxTab('monthly')" id="tab-monthly" class="tab-btn flex-1 py-3 text-xs uppercase">Mensual</button></div>
-                <div id="transactions-content"></div>
+                <div class="flex border-b mb-4 bg-white rounded-t-2xl">
+                    <button onclick="setTxTab('daily')" id="tab-daily" class="tab-btn flex-1 py-4 text-[10px] uppercase font-bold tracking-widest text-slate-400">Diario</button>
+                    <button onclick="setTxTab('monthly')" id="tab-monthly" class="tab-btn flex-1 py-4 text-[10px] uppercase font-bold tracking-widest text-slate-400">Mensual</button>
+                </div>
+                <div id="transactions-content" class="space-y-3"></div>
             </div>
             <div id="joint-view" class="view"></div>
             <div id="stats-view" class="view"></div>
@@ -49,10 +48,10 @@
 
         <nav class="bottom-nav shadow-lg text-slate-400">
             <div class="flex justify-around py-2">
-                <button data-view="dashboard" class="nav-btn flex-1"><svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg><span class="text-[9px] uppercase">Inicio</span></button>
-                <button data-view="transactions" class="nav-btn flex-1"><svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M9 17v-2a4 4 0 00-4-4H3a2 2 0 00-2 2v2a2 2 0 002 2h2a4 4 0 004-4zm0 0v-2a4 4 0 014-4h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a4 4 0 01-4-4zm-6 0a2 2 0 002 2h2a4 4 0 004-4v-2a4 4 0 00-4-4H3a2 2 0 00-2 2v2z"></path></svg><span class="text-[9px] uppercase">Gastos</span></button>
-                <button data-view="joint" class="nav-btn flex-1"><svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg><span class="text-[9px] uppercase">Pareja</span></button>
-                <button data-view="settings" class="nav-btn flex-1"><svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg><span class="text-[9px] uppercase">Ajustes</span></button>
+                <button data-view="dashboard" class="nav-btn flex-1 p-2"><svg class="w-5 h-5 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg><span class="text-[9px] uppercase">Inicio</span></button>
+                <button data-view="transactions" class="nav-btn flex-1 p-2"><svg class="w-5 h-5 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M9 17v-2a4 4 0 00-4-4H3a2 2 0 00-2 2v2a2 2 0 002 2h2a4 4 0 004-4zm0 0v-2a4 4 0 014-4h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a4 4 0 01-4-4zm-6 0a2 2 0 002 2h2a4 4 0 004-4v-2a4 4 0 00-4-4H3a2 2 0 00-2 2v2z"></path></svg><span class="text-[9px] uppercase">Gastos</span></button>
+                <button data-view="joint" class="nav-btn flex-1 p-2"><svg class="w-5 h-5 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg><span class="text-[9px] uppercase">Pareja</span></button>
+                <button data-view="settings" class="nav-btn flex-1 p-2"><svg class="w-5 h-5 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg><span class="text-[9px] uppercase">Ajustes</span></button>
             </div>
         </nav>
 
@@ -67,14 +66,17 @@
             </div>
             <form id="main-form" class="space-y-4">
                 <input type="number" id="f-amount" placeholder="Importe" step="0.01" class="w-full border-none rounded-2xl h-14 px-4 bg-slate-50 font-black text-2xl text-center" required>
-                <select id="f-category" class="w-full border-none rounded-2xl h-12 px-4 bg-slate-50 text-sm font-medium"></select>
-                <input type="text" id="f-desc" placeholder="¿Qué compraste?" class="w-full border-none rounded-2xl h-12 px-4 bg-slate-50 text-sm">
+                <div class="grid grid-cols-2 gap-2">
+                    <select id="f-category" class="border-none rounded-2xl h-12 px-4 bg-slate-50 text-sm font-medium"></select>
+                    <select id="f-account" class="border-none rounded-2xl h-12 px-4 bg-slate-50 text-sm font-medium"></select>
+                </div>
+                <input type="text" id="f-desc" placeholder="Descripción" class="w-full border-none rounded-2xl h-12 px-4 bg-slate-50 text-sm">
                 <div id="shared-toggle-container" class="bg-indigo-50 p-4 rounded-2xl flex justify-between items-center">
-                    <span class="font-bold text-indigo-900 text-sm">¿Gasto compartido?</span>
+                    <span class="font-bold text-indigo-900 text-sm italic">¿Compartir con pareja?</span>
                     <input type="checkbox" id="f-shared" class="w-6 h-6 rounded text-indigo-600">
                 </div>
                 <button type="submit" id="f-submit" class="w-full bg-indigo-600 text-white font-bold py-4 rounded-2xl shadow-lg mt-4">CONFIRMAR</button>
-                <button type="button" onclick="closeModal()" class="w-full text-slate-400 text-xs font-bold py-2 uppercase tracking-widest">Cancelar</button>
+                <button type="button" onclick="closeModal()" class="w-full text-slate-400 text-xs font-bold py-2 uppercase tracking-widest text-center">Cancelar</button>
             </form>
         </div>
     </div>
@@ -85,7 +87,7 @@
         const INITIAL_DATA = {
             users: [{id:1, name:'Lu Astigarraga'}, {id:2, name:'Bruno Velázquez'}],
             categories: ['Super', 'Salida', 'Transporte', 'Hogar', 'Salud', 'Sueldo', 'Venta', 'Otros'],
-            accounts: ['Efectivo'],
+            accounts: ['Efectivo', 'Banco'],
             expenses: [],
             budget: 50000
         };
@@ -96,23 +98,26 @@
         let txTab = 'daily';
 
         async function syncData() {
+            const btn = document.getElementById('sync-btn');
+            if(btn) btn.innerText = "Sincronizando...";
             try {
                 const res = await fetch(SCRIPT_URL + '?action=getGastos');
                 const data = await res.json();
                 state.expenses = data.map(r => ({
                     date: new Date(r[0]), desc: r[1], amount: parseFloat(r[2]), 
                     cat: r[3], user: r[4], shared: r[5] === 'Sí', 
-                    type: r[6] || 'gasto'
+                    type: r[6] || 'gasto', account: r[7] || 'Efectivo'
                 }));
                 saveState();
-                renderView(document.querySelector('.nav-btn.active')?.dataset.view || 'dashboard');
+                renderCurrentView();
             } catch (e) { console.error(e); }
+            if(btn) btn.innerText = "Sincronizar";
         }
 
         async function handleForm(e) {
             e.preventDefault();
             const btn = document.getElementById('f-submit');
-            btn.disabled = true; btn.innerText = "GUARDANDO...";
+            btn.disabled = true; btn.innerText = "Enviando...";
             
             const payload = {
                 fecha: new Date().toLocaleDateString('es-ES'),
@@ -121,15 +126,25 @@
                 cat: document.getElementById('f-category').value,
                 quien: currentUser.name,
                 compartido: document.getElementById('f-shared').checked ? 'Sí' : 'No',
-                tipo: currentType
+                tipo: currentType,
+                cuenta: document.getElementById('f-account').value
             };
 
             try {
                 await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
                 closeModal();
                 await syncData();
-            } catch (e) { alert("Error"); }
+            } catch (e) { alert("Error al conectar con Google"); }
             btn.disabled = false; btn.innerText = "CONFIRMAR";
+        }
+
+        function calculateDebt() {
+            let b = 0;
+            state.expenses.filter(e => e.shared && e.type === 'gasto').forEach(e => {
+                const d = e.amount / 2;
+                e.user === state.users[0].name ? b += d : b -= d;
+            });
+            return { amount: Math.abs(b), creditor: b > 0 ? 'Lu' : 'Bruno', debtor: b > 0 ? 'Bruno' : 'Lu' };
         }
 
         function renderView(viewId) {
@@ -142,19 +157,18 @@
                 const vis = getVisible();
                 const ing = vis.filter(e => e.type === 'ingreso').reduce((s,e) => s + e.amount, 0);
                 const gas = vis.filter(e => e.type === 'gasto').reduce((s,e) => s + e.amount, 0);
-                const bal = calculateDebt();
+                const debt = calculateDebt();
                 container.innerHTML = `
                     <div class="bg-white p-6 rounded-[32px] shadow-sm mb-6">
-                        <div class="flex justify-between items-center mb-4">
-                            <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Disponible</p><h2 class="text-3xl font-black text-slate-800">$ ${(ing - gas).toFixed(0)}</h2></div>
-                            <div class="text-right"><p class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Ingresos</p><p class="font-bold text-sm">+$ ${ing.toFixed(0)}</p></div>
+                        <div class="flex justify-between items-center mb-6">
+                            <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Disponible</p><h2 class="text-4xl font-black text-slate-800">$ ${(ing - gas).toFixed(0)}</h2></div>
+                            <div class="text-right"><p class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Ingresos</p><p class="font-bold text-sm text-emerald-600">+$ ${ing.toFixed(0)}</p></div>
                         </div>
-                        <div class="bg-indigo-600 p-4 rounded-2xl text-white text-center">
-                            <p class="text-[10px] font-bold opacity-70 uppercase mb-1">Balance Pareja</p>
-                            <p class="text-sm font-bold">${bal.amount === 0 ? '¡Están a mano!' : `${bal.debtor} le debe $${bal.amount.toFixed(0)} a ${bal.creditor}`}</p>
+                        <div class="bg-indigo-600 p-4 rounded-2xl text-white text-center shadow-lg">
+                            <p class="text-[10px] font-bold opacity-70 uppercase mb-1 tracking-widest">Estado Pareja</p>
+                            <p class="text-sm font-bold">${debt.amount === 0 ? '🎉 ¡Están al día!' : `${debt.debtor} le debe $${debt.amount.toFixed(0)} a ${debt.creditor}`}</p>
                         </div>
                     </div>
-                    <h3 class="text-xs font-bold text-slate-400 mb-4 uppercase tracking-widest">Movimientos</h3>
                     <div class="space-y-3">${vis.slice(-5).reverse().map(e => `
                         <div class="bg-white p-4 rounded-2xl flex justify-between items-center shadow-sm">
                             <div><p class="font-bold text-sm">${e.desc}</p><p class="text-[9px] text-slate-400 font-bold uppercase">${e.user} · ${e.cat}</p></div>
@@ -166,16 +180,19 @@
                 container.innerHTML = `
                     <h1 class="text-2xl font-black mb-6">Ajustes</h1>
                     <div class="bg-white p-6 rounded-[32px] shadow-sm mb-4">
-                        <h3 class="font-bold text-sm mb-4">Mis Cuentas</h3>
+                        <h3 class="font-bold text-sm mb-4">Mis Cuentas / Bancos</h3>
                         <div id="accounts-list" class="space-y-2 mb-4"></div>
                         <div class="flex gap-2">
-                            <input id="new-acc" placeholder="Nombre cuenta" class="flex-1 bg-slate-50 rounded-xl px-4 text-sm h-11 border-none">
+                            <input id="new-acc" placeholder="Ej: Santander, Efectivo..." class="flex-1 bg-slate-50 rounded-xl px-4 text-sm h-11 border-none">
                             <button onclick="addAccount()" class="bg-indigo-600 text-white px-4 rounded-xl font-bold text-sm">AÑADIR</button>
                         </div>
                     </div>
                     <div class="bg-white p-6 rounded-[32px] shadow-sm mb-6">
                         <h3 class="font-bold text-sm mb-4">Presupuesto Mensual</h3>
-                        <input type="number" id="budget-in" value="${state.budget}" onchange="state.budget=this.value;saveState()" class="w-full bg-slate-50 rounded-xl px-4 h-11 border-none font-bold">
+                        <div class="flex gap-2">
+                            <input type="number" id="budget-in" value="${state.budget}" class="flex-1 bg-slate-50 rounded-xl px-4 h-11 border-none font-bold">
+                            <button onclick="state.budget=document.getElementById('budget-in').value;saveState();alert('Guardado')" class="bg-indigo-600 text-white px-4 rounded-xl font-bold text-sm">OK</button>
+                        </div>
                     </div>
                     <button onclick="logout()" class="w-full text-red-500 font-bold p-4 bg-red-50 rounded-2xl uppercase text-[10px] tracking-widest">Cerrar Sesión</button>`;
                 renderAccounts();
@@ -187,31 +204,22 @@
                 container.innerHTML = `
                     <h1 class="text-2xl font-black mb-6">Pareja</h1>
                     <div class="bg-white p-6 rounded-[32px] shadow-sm">
-                        <h3 class="text-xs font-bold text-slate-400 uppercase mb-4 tracking-widest">Gasto Mensual Total</h3>
+                        <h3 class="text-xs font-bold text-slate-400 uppercase mb-4 tracking-widest">Gasto Mensual Acumulado</h3>
                         <div class="flex justify-between items-end mb-2"><span class="text-3xl font-black text-indigo-600">$ ${total.toFixed(0)}</span><span class="text-xs font-bold text-slate-400">Meta: $ ${state.budget}</span></div>
-                        <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden"><div class="bg-indigo-500 h-full" style="width: ${perc}%"></div></div>
+                        <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden"><div class="bg-indigo-500 h-full transition-all duration-1000" style="width: ${perc}%"></div></div>
                     </div>`;
             }
         }
 
-        function calculateDebt() {
-            let b = 0;
-            state.expenses.filter(e => e.shared && e.type === 'gasto').forEach(e => {
-                const d = e.amount / 2;
-                e.user === state.users[0].name ? b += d : b -= d;
-            });
-            return { amount: Math.abs(b), creditor: b > 0 ? 'Lu' : 'Bruno', debtor: b > 0 ? 'Bruno' : 'Lu' };
-        }
-
         window.setFormType = (t) => {
             currentType = t;
-            document.getElementById('btn-type-gasto').className = t==='gasto' ? 'flex-1 py-2 rounded-xl font-bold text-sm bg-white shadow-sm text-indigo-600' : 'flex-1 py-2 rounded-xl font-bold text-sm text-slate-400';
-            document.getElementById('btn-type-ingreso').className = t==='ingreso' ? 'flex-1 py-2 rounded-xl font-bold text-sm bg-white shadow-sm text-emerald-500' : 'flex-1 py-2 rounded-xl font-bold text-sm text-slate-400';
+            document.getElementById('btn-type-gasto').className = t==='gasto' ? 'flex-1 py-2 rounded-xl font-bold text-sm bg-white shadow-sm text-indigo-600' : 'flex-1 py-2 rounded-xl font-bold text-sm text-slate-400 text-center';
+            document.getElementById('btn-type-ingreso').className = t==='ingreso' ? 'flex-1 py-2 rounded-xl font-bold text-sm bg-white shadow-sm text-emerald-500' : 'flex-1 py-2 rounded-xl font-bold text-sm text-slate-400 text-center';
             document.getElementById('shared-toggle-container').style.display = t==='ingreso' ? 'none' : 'flex';
         };
 
         window.addAccount = () => { const n = document.getElementById('new-acc').value; if(n){ state.accounts.push(n); saveState(); renderAccounts(); document.getElementById('new-acc').value=''; } };
-        window.renderAccounts = () => { document.getElementById('accounts-list').innerHTML = state.accounts.map((a, i) => `<div class="flex justify-between items-center bg-slate-50 p-3 rounded-xl"><span class="text-sm font-medium">${a}</span><button onclick="state.accounts.splice(${i},1);saveState();renderAccounts()" class="text-red-400 text-xs">Eliminar</button></div>`).join(''); };
+        window.renderAccounts = () => { document.getElementById('accounts-list').innerHTML = state.accounts.map((a, i) => `<div class="flex justify-between items-center bg-slate-50 p-3 rounded-xl"><span class="text-sm font-medium">${a}</span><button onclick="state.accounts.splice(${i},1);saveState();renderAccounts()" class="text-red-400 text-xs font-bold uppercase">Eliminar</button></div>`).join(''); };
         window.setTxTab = (t) => {
             txTab = t;
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.id === `tab-${t}`));
@@ -219,24 +227,24 @@
             content.innerHTML = '';
             const vis = getVisible();
             if(t==='daily') {
-                vis.slice().reverse().forEach(e => {
-                    content.innerHTML += `<div class="bg-white p-4 rounded-2xl flex justify-between items-center mb-3 shadow-sm">
+                vis.slice().sort((a,b)=>b.date-a.date).forEach(e => {
+                    content.innerHTML += `<div class="bg-white p-4 rounded-2xl flex justify-between items-center shadow-sm">
                         <div><p class="font-bold text-sm">${e.desc}</p><p class="text-[9px] text-slate-400 uppercase font-bold">${e.date.toLocaleDateString()}</p></div>
                         <p class="font-bold text-sm ${e.type==='ingreso'?'text-emerald-500':''}">${e.type==='ingreso'?'+':'-'} $${e.amount.toFixed(0)}</p>
                     </div>`;
                 });
-            } else if (t === 'calendar') {
-                content.innerHTML = '<div class="grid grid-cols-7 gap-1">' + Array.from({length:31}, (_,i)=>`<div class="bg-white h-12 rounded-lg flex items-center justify-center text-[10px] font-bold border border-slate-50">${i+1}</div>`).join('') + '</div>';
             } else if (t === 'monthly') {
                 const m = {}; vis.forEach(e => { const k = e.date.getMonth(); m[k] = (m[k]||0) + (e.type==='ingreso'?e.amount:-e.amount); });
-                Object.keys(m).forEach(k => { content.innerHTML += `<div class="bg-white p-4 rounded-2xl flex justify-between mb-2 shadow-sm"><span class="font-bold text-sm">Mes ${parseInt(k)+1}</span><span class="font-bold text-indigo-600">$ ${m[k].toFixed(0)}</span></div>`; });
+                Object.keys(m).sort((a,b)=>b-a).forEach(k => { content.innerHTML += `<div class="bg-white p-4 rounded-2xl flex justify-between mb-2 shadow-sm"><span class="font-bold text-sm">Mes ${parseInt(k)+1}</span><span class="font-bold text-indigo-600">$ ${m[k].toFixed(0)}</span></div>`; });
             }
         };
 
         function getVisible() { return state.expenses.filter(e => e.shared || e.user === currentUser.name); }
+        function renderCurrentView() { const active = document.querySelector('.nav-btn.active'); if(active) renderView(active.dataset.view); }
         function saveState() { localStorage.setItem('cc_state', JSON.stringify(state)); }
         function openModal() {
             document.getElementById('f-category').innerHTML = state.categories.map(c => `<option>${c}</option>`).join('');
+            document.getElementById('f-account').innerHTML = state.accounts.map(a => `<option>${a}</option>`).join('');
             document.getElementById('add-modal').classList.add('active');
         }
         function closeModal() { document.getElementById('add-modal').classList.remove('active'); document.getElementById('main-form').reset(); }
@@ -253,7 +261,7 @@
             } else {
                 state.users.forEach(u => {
                     const b = document.createElement('button');
-                    b.className = "w-full bg-white p-5 rounded-2xl font-bold shadow-sm border border-slate-100";
+                    b.className = "w-full bg-white p-6 rounded-2xl font-bold shadow-sm border border-slate-100 text-lg active:scale-95 transition-transform";
                     b.innerText = u.name;
                     b.onclick = () => { localStorage.setItem('cc_uid', u.id); location.reload(); };
                     document.getElementById('user-selection-container').appendChild(b);
