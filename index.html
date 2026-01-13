@@ -4,11 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cuentas Claras</title>
-    
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2845/2845705.png">
-
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -26,7 +24,7 @@
 <body class="text-gray-800">
 
     <div id="login-view" class="min-h-screen flex flex-col items-center justify-center p-4">
-        <h1 class="text-4xl font-bold mb-12">Cuentas Claras</h1>
+        <h1 class="text-4xl font-bold mb-12 text-gray-900">Cuentas Claras</h1>
         <div id="user-selection-container" class="w-full max-w-sm space-y-4"></div>
     </div>
 
@@ -35,7 +33,7 @@
             <header class="flex justify-between items-center mb-6">
                 <h2 id="welcome-header" class="text-xl font-bold text-indigo-600"></h2>
                 <div class="flex gap-3">
-                    <button onclick="syncData()" class="text-[10px] font-bold bg-indigo-50 text-indigo-600 px-2 py-1 rounded">SINCRONIZAR</button>
+                    <button onclick="syncData()" id="sync-btn" class="text-[10px] font-bold bg-indigo-50 text-indigo-600 px-2 py-1 rounded">SINCRONIZAR</button>
                     <button id="logout-btn" class="text-[10px] font-bold text-gray-400">SALIR</button>
                 </div>
             </header>
@@ -58,50 +56,31 @@
 
         <nav class="bottom-nav shadow-lg text-gray-400 font-medium">
             <div class="container mx-auto max-w-2xl flex justify-around">
-                <button data-view="dashboard" class="nav-btn flex-1 p-2 text-center active">
-                    <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                    <span class="nav-text text-[9px] uppercase">Inicio</span>
-                </button>
-                <button data-view="transactions" class="nav-btn flex-1 p-2 text-center">
-                    <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M9 17v-2a4 4 0 00-4-4H3a2 2 0 00-2 2v2a2 2 0 002 2h2a4 4 0 004-4zm0 0v-2a4 4 0 014-4h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a4 4 0 01-4-4zm-6 0a2 2 0 002 2h2a4 4 0 004-4v-2a4 4 0 00-4-4H3a2 2 0 00-2 2v2z"></path></svg>
-                    <span class="nav-text text-[9px] uppercase">Gastos</span>
-                </button>
-                <button data-view="joint" class="nav-btn flex-1 p-2 text-center">
-                    <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                    <span class="nav-text text-[9px] uppercase">Pareja</span>
-                </button>
-                <button data-view="stats" class="nav-btn flex-1 p-2 text-center">
-                    <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
-                    <span class="nav-text text-[9px] uppercase">Stats</span>
-                </button>
-                <button data-view="settings" class="nav-btn flex-1 p-2 text-center">
-                    <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
-                    <span class="nav-text text-[9px] uppercase">Ajustes</span>
-                </button>
+                <button data-view="dashboard" class="nav-btn flex-1 p-2 text-center"><svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg><span class="nav-text text-[9px] uppercase">Inicio</span></button>
+                <button data-view="transactions" class="nav-btn flex-1 p-2 text-center"><svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M9 17v-2a4 4 0 00-4-4H3a2 2 0 00-2 2v2a2 2 0 002 2h2a4 4 0 004-4zm0 0v-2a4 4 0 014-4h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a4 4 0 01-4-4zm-6 0a2 2 0 002 2h2a4 4 0 004-4v-2a4 4 0 00-4-4H3a2 2 0 00-2 2v2z"></path></svg><span class="nav-text text-[9px] uppercase">Gastos</span></button>
+                <button data-view="joint" class="nav-btn flex-1 p-2 text-center"><svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg><span class="nav-text text-[9px] uppercase">Pareja</span></button>
+                <button data-view="stats" class="nav-btn flex-1 p-2 text-center"><svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg><span class="nav-text text-[9px] uppercase">Stats</span></button>
+                <button data-view="settings" class="nav-btn flex-1 p-2 text-center"><svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg><span class="nav-text text-[9px] uppercase">Ajustes</span></button>
             </div>
         </nav>
 
-        <button id="add-expense-btn-fab" class="fixed bottom-24 right-5 bg-indigo-600 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center">
-            <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-        </button>
+        <button id="add-expense-btn-fab" class="fixed bottom-24 right-5 bg-indigo-600 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center active:scale-90 transition-transform"><svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M12 4v16m8-8H4" /></svg></button>
     </div>
 
     <div id="add-expense-modal" class="modal-overlay">
         <div class="bg-white w-full max-w-md m-4 p-6 rounded-[32px] shadow-2xl">
-            <h2 class="text-2xl font-bold text-center mb-6">Nuevo Gasto</h2>
+            <h2 class="text-2xl font-bold text-center mb-6 text-gray-900">Nuevo Gasto</h2>
             <form id="expense-form" class="space-y-4">
                 <input type="number" id="expense-amount" placeholder="Importe" step="0.01" class="w-full border-gray-100 rounded-2xl h-12 px-4 bg-gray-50 font-bold text-lg" required>
                 <select id="expense-category" class="w-full border-gray-100 rounded-2xl h-12 px-4 bg-gray-50 text-sm"></select>
                 <input type="text" id="expense-description" placeholder="Descripción (opcional)" class="w-full border-gray-100 rounded-2xl h-12 px-4 bg-gray-50 text-sm">
-                
                 <div class="bg-indigo-50 p-4 rounded-3xl flex items-center justify-between">
-                    <span class="font-bold text-indigo-900 text-sm">¿Gasto compartido?</span>
+                    <span class="font-bold text-indigo-900 text-sm italic">¿Compartir gasto?</span>
                     <input type="checkbox" id="shared-expense-toggle" class="w-6 h-6 rounded text-indigo-600">
                 </div>
-
-                <div class="pt-4 space-y-2">
-                    <button type="submit" id="submit-btn" class="w-full bg-indigo-600 text-white font-bold py-4 rounded-2xl shadow-lg active:scale-95 transition-transform">GUARDAR</button>
-                    <button type="button" onclick="closeModal()" class="w-full text-gray-400 text-sm py-2">Cancelar</button>
+                <div class="pt-4 flex flex-col gap-2">
+                    <button type="submit" id="submit-btn" class="w-full bg-indigo-600 text-white font-bold py-4 rounded-2xl shadow-lg">CONFIRMAR</button>
+                    <button type="button" onclick="closeModal()" class="w-full text-gray-400 text-sm py-2">Cerrar</button>
                 </div>
             </form>
         </div>
@@ -112,11 +91,7 @@
 
         const APP_DATA = {
             users: [{ id: 1, name: 'Lu Astigarraga' }, { id: 2, name: 'Bruno Velázquez' }],
-            categories: [
-                { id: 1, name: 'Super', icon: '🛒' }, { id: 2, name: 'Salida', icon: '🍔' },
-                { id: 3, name: 'Transporte', icon: '🚗' }, { id: 4, name: 'Salud', icon: '❤️' },
-                { id: 5, name: 'Hogar', icon: '🏠' }, { id: 8, name: 'Otros', icon: '🤷' }
-            ],
+            categories: [{ id: 1, name: 'Super', icon: '🛒' }, { id: 2, name: 'Salida', icon: '🍔' }, { id: 3, name: 'Transporte', icon: '🚗' }, { id: 4, name: 'Salud', icon: '❤️' }, { id: 5, name: 'Hogar', icon: '🏠' }, { id: 8, name: 'Otros', icon: '🤷' }],
             expenses: [],
             budget: 50000
         };
@@ -126,6 +101,8 @@
         let txTab = 'daily';
 
         async function syncData() {
+            const btn = document.getElementById('sync-btn');
+            if(btn) btn.innerText = "CARGANDO...";
             try {
                 const res = await fetch(SCRIPT_URL + '?action=getGastos');
                 const data = await res.json();
@@ -139,16 +116,16 @@
                     paidById: row[4] === 'Lu Astigarraga' ? 1 : 2
                 }));
                 saveState();
-                renderView(document.querySelector('.nav-btn.active').dataset.view);
-            } catch (e) { console.error("Error sync", e); }
+                renderCurrentView();
+            } catch (e) { console.error("Sync error", e); }
+            if(btn) btn.innerText = "SINCRONIZAR";
         }
 
         async function handleFormSubmit(e) {
             e.preventDefault();
             const btn = document.getElementById('submit-btn');
-            btn.disabled = true; btn.innerText = "Guardando...";
-
-            const newExp = {
+            btn.disabled = true; btn.innerText = "GUARDANDO...";
+            const payload = {
                 fecha: new Date().toLocaleDateString('es-ES'),
                 desc: document.getElementById('expense-description').value || 'Gasto',
                 monto: parseFloat(document.getElementById('expense-amount').value),
@@ -156,13 +133,12 @@
                 quien: currentUser.name,
                 compartido: document.getElementById('shared-expense-toggle').checked ? 'Sí' : 'No'
             };
-
             try {
-                await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(newExp) });
+                await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
                 closeModal();
                 await syncData();
             } catch (e) { alert("Error"); }
-            btn.disabled = false; btn.innerText = "GUARDAR";
+            btn.disabled = false; btn.innerText = "CONFIRMAR";
         }
 
         function calculateBalances() {
@@ -174,6 +150,15 @@
                 }
             });
             return { amount: Math.abs(bal), creditor: bal > 0 ? state.users[0] : state.users[1], debtor: bal > 0 ? state.users[1] : state.users[0] };
+        }
+
+        function getVisibleExpenses() {
+            return state.expenses.filter(e => e.isShared || e.paidByName === currentUser.name);
+        }
+
+        function renderCurrentView() {
+            const activeNav = document.querySelector('.nav-btn.active');
+            if(activeNav) renderView(activeNav.dataset.view);
         }
 
         function renderView(viewId) {
@@ -191,7 +176,6 @@
                         `<p class="text-xs opacity-80 mb-1">${bal.debtor.name} le debe a ${bal.creditor.name}</p>
                          <h2 class="text-5xl font-black">$ ${bal.amount.toFixed(0)}</h2>`}
                     </div>
-                    <h3 class="font-bold text-gray-400 text-xs mb-4 uppercase tracking-widest">Recientes</h3>
                     <div class="space-y-3">${getVisibleExpenses().slice(-3).reverse().map(e => `
                         <div class="bg-white p-4 rounded-2xl flex justify-between items-center shadow-sm">
                             <div><p class="font-bold text-sm">${e.description}</p><p class="text-[9px] text-gray-400 font-bold uppercase">${e.paidByName} · ${e.isShared?'COMPARTIDO':'PERSONAL'}</p></div>
@@ -208,10 +192,19 @@
                 container.innerHTML = `
                     <h1 class="text-2xl font-black mb-6">Pareja</h1>
                     <div class="bg-white p-6 rounded-[32px] shadow-sm mb-6">
-                        <h3 class="text-xs font-bold text-gray-400 uppercase mb-4 tracking-widest">Presupuesto Mensual</h3>
+                        <h3 class="text-xs font-bold text-gray-400 uppercase mb-4 tracking-widest">Gasto Mensual Total</h3>
                         <div class="flex justify-between items-end mb-2"><span class="text-3xl font-black text-indigo-600">$ ${totalMonth.toFixed(0)}</span><span class="text-xs font-bold text-gray-400">Meta: $ ${state.budget}</span></div>
                         <div class="w-full bg-slate-100 h-4 rounded-full overflow-hidden"><div class="bg-indigo-500 h-full transition-all duration-1000" style="width: ${perc}%"></div></div>
                     </div>`;
+            }
+
+            if (viewId === 'stats') {
+                container.innerHTML = `<h1 class="text-2xl font-black mb-6">Stats</h1><div class="space-y-6"><div class="bg-white p-6 rounded-3xl shadow-sm"><canvas id="monthlyChart"></canvas></div><div class="bg-white p-6 rounded-3xl shadow-sm"><canvas id="categoryChart"></canvas></div></div>`;
+                const vis = getVisibleExpenses();
+                const ct = {}; vis.forEach(e => { const c = e.categoryName || 'Otros'; ct[c] = (ct[c] || 0) + e.amount; });
+                const mt = {}; vis.forEach(e => { const k = e.date.toLocaleString('es-ES', { month: 'short' }); mt[k] = (mt[k] || 0) + e.amount; });
+                new Chart(document.getElementById('categoryChart'), { type: 'doughnut', data: { labels: Object.keys(ct), datasets: [{ data: Object.values(ct), backgroundColor: ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'] }] } });
+                new Chart(document.getElementById('monthlyChart'), { type: 'bar', data: { labels: Object.keys(mt), datasets: [{ label: 'Evolución', data: Object.values(mt), backgroundColor: '#4f46e5', borderRadius: 10 }] } });
             }
 
             if (viewId === 'settings') {
@@ -224,7 +217,7 @@
                             <button onclick="saveBudget()" class="bg-indigo-600 text-white px-6 rounded-xl font-bold">OK</button>
                         </div>
                     </div>
-                    <button onclick="logout()" class="w-full text-red-400 font-bold py-4 text-xs tracking-[2px] uppercase">Cerrar Sesión</button>`;
+                    <button onclick="logout()" class="w-full bg-red-50 text-red-500 font-bold py-4 rounded-2xl text-xs uppercase tracking-widest">Cerrar Sesión</button>`;
             }
         }
 
@@ -233,27 +226,37 @@
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.id === `tab-${tab}`));
             const content = document.getElementById('transactions-content');
             content.innerHTML = '';
-            const vis = getVisibleExpenses();
-            if(tab === 'daily') {
-                vis.slice().reverse().forEach(e => {
+            const visible = getVisibleExpenses();
+            if (tab === 'daily') {
+                visible.slice().sort((a,b) => b.date - a.date).forEach(e => {
                     content.innerHTML += `<div class="bg-white p-4 rounded-2xl flex justify-between items-center mb-3 shadow-sm">
-                        <div><p class="font-bold text-sm">${e.description}</p><p class="text-[9px] text-gray-400 uppercase font-bold">${e.date.toLocaleDateString()}</p></div>
+                        <div><p class="font-bold text-sm">${e.description}</p><p class="text-[9px] text-gray-400 uppercase font-bold">${e.date.toLocaleDateString('es-ES')}</p></div>
                         <p class="font-bold text-sm">$ ${e.amount.toFixed(0)}</p>
                     </div>`;
                 });
+            } else if (tab === 'calendar') {
+                content.innerHTML = '<div id="cal-grid" class="grid grid-cols-7 gap-1"></div>';
+                for(let i=1; i<=31; i++) {
+                    const total = visible.filter(e => e.date.getDate() === i && e.date.getMonth() === (new Date()).getMonth()).reduce((s, e) => s + e.amount, 0);
+                    document.getElementById('cal-grid').innerHTML += `<div class="bg-white h-12 rounded-lg flex flex-col items-center justify-center border border-gray-50"><span class="text-[10px] font-bold">${i}</span>${total > 0 ? `<span class="text-[7px] text-red-500 font-bold">$${total.toFixed(0)}</span>` : ''}</div>`;
+                }
+            } else if (tab === 'monthly') {
+                const m = {}; visible.forEach(e => { const k = `${e.date.getFullYear()}-${String(e.date.getMonth()).padStart(2,'0')}`; m[k] = (m[k] || 0) + e.amount; });
+                Object.keys(m).sort((a,b) => b.localeCompare(a)).forEach(k => {
+                    const [y, mon] = k.split('-');
+                    content.innerHTML += `<div class="bg-white p-4 rounded-2xl flex justify-between items-center mb-2 shadow-sm"><span class="font-bold capitalize text-sm">${new Date(y, parseInt(mon), 1).toLocaleString('es-ES', {month: 'long', year: 'numeric'})}</span><span class="text-indigo-600 font-bold">$ ${m[k].toFixed(0)}</span></div>`;
+                });
             }
-            // Calendario y Mensual se renderizan similar a versiones previas...
         }
 
         window.saveBudget = () => { state.budget = parseInt(document.getElementById('budget-input').value) || 50000; saveState(); alert('Presupuesto actualizado'); };
         window.logout = () => { localStorage.clear(); location.reload(); };
-        function getVisibleExpenses() { return state.expenses.filter(e => e.isShared || e.paidByName === currentUser.name); }
         function saveState() { localStorage.setItem('cuentasClarasState', JSON.stringify(state)); }
         function openModal() {
             document.getElementById('expense-category').innerHTML = state.categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
             document.getElementById('add-expense-modal').classList.add('active');
         }
-        function closeModal() { document.getElementById('add-expense-modal').classList.remove('active'); }
+        function closeModal() { document.getElementById('add-expense-modal').classList.remove('active'); document.getElementById('expense-form').reset(); }
 
         document.addEventListener('DOMContentLoaded', () => {
             const uid = localStorage.getItem('currentUserId');
