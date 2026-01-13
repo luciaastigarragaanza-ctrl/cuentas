@@ -46,24 +46,24 @@
             <div id="joint-view" class="view"></div>
 
             <div id="settings-view" class="view">
-                <h1 class="text-2xl font-bold mb-6">Ajustes</h1>
+                <h1 class="text-2xl font-bold mb-6 text-indigo-600">Ajustes</h1>
                 <div class="space-y-6">
                     <div class="bg-white p-6 rounded-[24px] shadow-sm border border-slate-100">
                         <p class="text-indigo-600 font-bold text-sm italic mb-4">Mis Cuentas y Bancos</p>
-                        <div id="acc-list" class="space-y-2 mb-4"></div>
-                        <div class="flex gap-2"><input id="n-acc" placeholder="Ej: Santander" class="flex-1 bg-slate-50 rounded-xl px-4 h-11 text-sm border-none outline-none"><button onclick="addAcc('banco')" class="bg-indigo-600 text-white px-4 rounded-xl font-bold text-xs uppercase">Ok</button></div>
+                        <div id="acc-list" class="space-y-2 mb-4 text-slate-700"></div>
+                        <div class="flex gap-2"><input id="n-acc" placeholder="Ej: Efectivo" class="flex-1 bg-slate-50 rounded-xl px-4 h-11 text-sm outline-none"><button onclick="addAcc('banco')" class="bg-indigo-600 text-white px-4 rounded-xl font-bold text-xs uppercase">Ok</button></div>
                     </div>
                     <div class="bg-white p-6 rounded-[24px] shadow-sm border border-slate-100">
                         <p class="text-indigo-600 font-bold text-sm italic mb-4">Tarjetas de Crédito</p>
-                        <div id="card-list" class="space-y-2 mb-4"></div>
-                        <div class="grid grid-cols-2 gap-2"><input id="n-card" placeholder="Nombre" class="bg-slate-50 rounded-xl px-4 h-11 text-xs border-none outline-none"><input id="n-day" type="number" placeholder="Día Cierre" class="bg-slate-50 rounded-xl px-4 h-11 text-xs border-none outline-none"></div>
-                        <button onclick="addAcc('tarjeta')" class="w-full mt-2 bg-indigo-600 text-white py-3 rounded-xl font-bold text-xs uppercase">Añadir Tarjeta</button>
+                        <div id="card-list" class="space-y-2 mb-4 text-slate-700"></div>
+                        <div class="grid grid-cols-2 gap-2"><input id="n-card" placeholder="Nombre" class="bg-slate-50 rounded-xl px-4 h-11 text-xs outline-none"><input id="n-day" type="number" placeholder="Día Cierre" class="bg-slate-50 rounded-xl px-4 h-11 text-xs outline-none"></div>
+                        <button onclick="addAcc('tarjeta')" class="w-full mt-2 bg-indigo-600 text-white py-3 rounded-xl font-bold text-xs uppercase text-center">Añadir Tarjeta</button>
                     </div>
                     <div class="bg-white p-6 rounded-[24px] shadow-sm border border-slate-100">
                         <p class="text-indigo-600 font-bold text-sm italic mb-4">Máximo Presupuesto Pareja</p>
-                        <input type="number" id="budget-in" onchange="state.budget=this.value;saveState();" class="w-full bg-slate-50 rounded-xl px-4 h-11 border-none font-bold text-slate-700 outline-none">
+                        <input type="number" id="budget-in" onchange="state.budget=parseFloat(this.value);saveState();" class="w-full bg-slate-50 rounded-xl px-4 h-11 border-none font-bold text-slate-700 outline-none">
                     </div>
-                    <button onclick="logout()" class="w-full text-red-400 font-bold py-4 bg-red-50 rounded-2xl uppercase text-[10px] tracking-widest">Cerrar Sesión</button>
+                    <button onclick="logout()" class="w-full text-red-400 font-bold py-4 bg-red-50 rounded-2xl uppercase text-[10px] tracking-widest text-center">Cerrar Sesión</button>
                 </div>
             </div>
         </div>
@@ -79,7 +79,7 @@
     </div>
 
     <div id="add-modal" class="modal-overlay">
-        <div class="bg-white w-full max-w-md m-4 p-6 rounded-[32px] shadow-2xl">
+        <div class="bg-white w-full max-w-md m-4 p-6 rounded-[32px] shadow-2xl overflow-y-auto max-h-[90vh]">
             <div class="flex gap-2 mb-6 p-1 bg-slate-100 rounded-2xl">
                 <button onclick="setFormType('gasto')" id="bt-gasto" class="flex-1 py-2 rounded-xl font-bold text-xs uppercase">Gasto</button>
                 <button onclick="setFormType('ingreso')" id="bt-ingreso" class="flex-1 py-2 rounded-xl font-bold text-xs uppercase">Ingreso</button>
@@ -98,13 +98,13 @@
                 <input type="text" id="f-desc" placeholder="Descripción" class="w-full rounded-2xl h-12 px-4 bg-slate-50 text-sm border-none outline-none">
                 <div class="grid grid-cols-2 gap-2">
                     <div class="bg-slate-50 p-3 rounded-2xl">
-                        <p class="text-[8px] font-bold text-gray-400 uppercase mb-1">Recurrencia</p>
+                        <p class="text-[8px] font-bold text-gray-400 uppercase mb-1 font-bold">Recurrencia</p>
                         <select id="f-recurrence" class="w-full bg-transparent text-xs border-none p-0 outline-none">
                             <option value="No">No</option><option value="Semanal">Semanal</option><option value="Mensual">Mensual</option><option value="Anual">Anual</option>
                         </select>
                     </div>
                     <div class="bg-indigo-50 p-3 rounded-2xl flex items-center justify-between">
-                        <span class="text-[8px] font-bold text-indigo-400 uppercase">¿Compartido?</span>
+                        <span class="text-[8px] font-bold text-indigo-400 uppercase font-bold">Compartir</span>
                         <input type="checkbox" id="f-shared" class="w-5 h-5 rounded border-none bg-indigo-100">
                     </div>
                 </div>
@@ -192,18 +192,54 @@
                     return { ...a, bal };
                 });
 
-                document.getElementById('accounts-header-summary').innerHTML = `<div><p class="text-[8px] text-gray-500 font-bold uppercase">Capital</p><p class="text-xs font-bold text-blue-400">${capital.toFixed(2)}</p></div><div><p class="text-[8px] text-gray-500 font-bold uppercase">A deber</p><p class="text-xs font-bold text-red-400">${Math.abs(aDeber).toFixed(2)}</p></div><div><p class="text-[8px] text-gray-500 font-bold uppercase">Balance</p><p class="text-xs font-bold text-white">${(capital + aDeber).toFixed(2)}</p></div>`;
+                document.getElementById('accounts-header-summary').innerHTML = `<div><p class="text-[8px] text-gray-500 font-bold uppercase">Capital</p><p class="text-xs font-bold text-blue-400">${capital.toFixed(0)}</p></div><div><p class="text-[8px] text-gray-500 font-bold uppercase">A deber</p><p class="text-xs font-bold text-red-400">${Math.abs(aDeber).toFixed(0)}</p></div><div><p class="text-[8px] text-gray-500 font-bold uppercase">Balance</p><p class="text-xs font-bold text-white">${(capital + aDeber).toFixed(0)}</p></div>`;
                 const list = document.getElementById('accounts-list-content'); list.innerHTML = `<div class="text-[10px] text-gray-500 font-bold uppercase tracking-widest border-b border-gray-800 pb-1">Bancos</div>`;
-                accs.filter(a => a.type === 'banco').forEach(a => { list.innerHTML += `<div class="flex justify-between py-2 text-sm"><span>${a.name}</span><span class="${a.bal < 0 ? 'text-red-400' : 'text-blue-400'} font-bold">$ ${a.bal.toFixed(2)}</span></div>`; });
+                accs.filter(a => a.type === 'banco').forEach(a => { list.innerHTML += `<div class="flex justify-between py-2 text-sm"><span>${a.name}</span><span class="${a.bal < 0 ? 'text-red-400' : 'text-blue-400'} font-bold">$ ${a.bal.toFixed(0)}</span></div>`; });
                 list.innerHTML += `<div class="mt-8 flex justify-between text-[10px] text-gray-500 font-bold uppercase tracking-widest border-b border-gray-800 pb-1"><span>Tarjetas</span><div class="flex gap-4"><span>Saldo a pagar</span><span>Saldo restante</span></div></div>`;
-                accs.filter(a => a.type === 'tarjeta').forEach(a => { list.innerHTML += `<div class="flex justify-between py-3"><div><p class="text-sm font-bold text-red-400">${a.name}</p><p class="text-[8px] text-gray-600 font-bold uppercase">Cierre el ${a.day}</p></div><div class="flex gap-10 text-xs font-bold"><span class="text-red-400">$ 0.00</span><span>$ ${Math.abs(a.bal).toFixed(2)}</span></div></div>`; });
+                accs.filter(a => a.type === 'tarjeta').forEach(a => { list.innerHTML += `<div class="flex justify-between py-3"><div><p class="text-sm font-bold text-red-400">${a.name}</p><p class="text-[8px] text-gray-600 font-bold uppercase tracking-widest">Cierre el ${a.day}</p></div><div class="flex gap-10 text-xs font-bold"><span class="text-red-400">$ 0</span><span>$ ${Math.abs(a.bal).toFixed(0)}</span></div></div>`; });
             }
 
             if (viewId === 'joint') {
-                const total = (state.expenses || []).filter(e => e.shared && e.type === 'gasto' && e.date.getMonth() === (new Date()).getMonth()).reduce((s,e) => s + e.amount, 0);
-                const disp = state.budget - total;
-                const perc = Math.min((total / state.budget) * 100, 100);
-                document.getElementById('joint-view').innerHTML = `<h1 class="text-2xl font-bold mb-6">Pareja</h1><div class="bg-white p-6 rounded-[32px] shadow-sm mb-6 border border-slate-50 text-slate-800"><h3 class="text-[10px] font-bold text-slate-400 uppercase mb-6 tracking-widest text-center">Presupuesto Mensual</h3><div class="grid grid-cols-2 gap-4 mb-6 text-center"><div class="p-4 bg-slate-50 rounded-2xl"><p class="text-[9px] font-bold text-slate-400 uppercase mb-1">Máximo</p><p class="text-xl font-black text-slate-700">$ ${state.budget}</p></div><div class="p-4 ${disp < 0 ? 'bg-red-50' : 'bg-emerald-50'} rounded-2xl"><p class="text-[9px] font-bold ${disp < 0 ? 'text-red-400' : 'text-emerald-500'} uppercase mb-1">Disponible</p><p class="text-xl font-black ${disp < 0 ? 'text-red-600' : 'text-emerald-600'}">$ ${disp.toFixed(0)}</p></div></div><div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden"><div class="bg-indigo-500 h-full transition-all duration-1000" style="width: ${perc}%"></div></div></div>`;
+                const now = new Date();
+                const monthExpenses = (state.expenses || []).filter(e => e.type === 'gasto' && e.date.getMonth() === now.getMonth());
+                
+                const sharedTotal = monthExpenses.filter(e => e.shared).reduce((s,e) => s + e.amount, 0);
+                const luTotal = monthExpenses.filter(e => !e.shared && e.user === 'Lu Astigarraga').reduce((s,e) => s + e.amount, 0);
+                const brunoTotal = monthExpenses.filter(e => !e.shared && e.user === 'Bruno Velázquez').reduce((s,e) => s + e.amount, 0);
+                
+                const totalGasto = sharedTotal + luTotal + brunoTotal;
+                const disp = state.budget - sharedTotal; // El presupuesto es sobre lo compartido
+                const perc = Math.min((sharedTotal / state.budget) * 100, 100);
+
+                const percShared = totalGasto ? (sharedTotal / totalGasto) * 100 : 0;
+                const percLu = totalGasto ? (luTotal / totalGasto) * 100 : 0;
+                const percBruno = totalGasto ? (brunoTotal / totalGasto) * 100 : 0;
+
+                document.getElementById('joint-view').innerHTML = `
+                    <h1 class="text-2xl font-bold mb-6">Pareja</h1>
+                    <div class="bg-white p-6 rounded-[32px] shadow-sm mb-6 border border-slate-50 text-slate-800">
+                        <h3 class="text-[10px] font-bold text-slate-400 uppercase mb-6 tracking-widest text-center">Presupuesto Compartido</h3>
+                        <div class="grid grid-cols-2 gap-4 mb-6 text-center">
+                            <div class="p-4 bg-slate-50 rounded-2xl"><p class="text-[9px] font-bold text-slate-400 uppercase mb-1">Máximo</p><p class="text-xl font-black text-slate-700">$ ${state.budget}</p></div>
+                            <div class="p-4 ${disp < 0 ? 'bg-red-50' : 'bg-emerald-50'} rounded-2xl"><p class="text-[9px] font-bold ${disp < 0 ? 'text-red-400' : 'text-emerald-500'} uppercase mb-1">Disponible</p><p class="text-xl font-black ${disp < 0 ? 'text-red-600' : 'text-emerald-600'}">$ ${disp.toFixed(0)}</p></div>
+                        </div>
+                        <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden"><div class="bg-indigo-500 h-full transition-all duration-1000" style="width: ${perc}%"></div></div>
+                        <p class="text-[10px] text-center mt-2 font-bold text-slate-400 italic">Gastado compartido: $ ${sharedTotal.toFixed(0)}</p>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-[32px] shadow-sm border border-slate-50 text-slate-800">
+                        <h3 class="text-[10px] font-bold text-slate-400 uppercase mb-4 tracking-widest">Distribución del Gasto</h3>
+                        <div class="flex h-8 w-full rounded-xl overflow-hidden mb-4">
+                            <div class="bg-indigo-500 h-full" style="width: ${percShared}%"></div>
+                            <div class="bg-pink-400 h-full" style="width: ${percLu}%"></div>
+                            <div class="bg-blue-400 h-full" style="width: ${percBruno}%"></div>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center text-xs font-bold"><div class="flex items-center gap-2"><div class="w-3 h-3 bg-indigo-500 rounded"></div><span>Compartido</span></div><span>${percShared.toFixed(1)}%</span></div>
+                            <div class="flex justify-between items-center text-xs font-bold"><div class="flex items-center gap-2"><div class="w-3 h-3 bg-pink-400 rounded"></div><span>Lu</span></div><span>${percLu.toFixed(1)}%</span></div>
+                            <div class="flex justify-between items-center text-xs font-bold"><div class="flex items-center gap-2"><div class="w-3 h-3 bg-blue-400 rounded"></div><span>Bruno</span></div><span>${percBruno.toFixed(1)}%</span></div>
+                        </div>
+                    </div>`;
             }
 
             if (viewId === 'settings') {
@@ -240,8 +276,8 @@
         window.renderSettingsAccs = () => {
             const accList = document.getElementById('acc-list');
             const cardList = document.getElementById('card-list');
-            if(accList) accList.innerHTML = (state.accounts || []).filter(a=>a.type==='banco').map((a)=>`<div class="flex justify-between bg-slate-50 p-3 rounded-xl text-xs font-bold"><span>${a.name}</span><button onclick="state.accounts.splice(${state.accounts.indexOf(a)},1);saveState();renderSettingsAccs()" class="text-red-400">ELIMINAR</button></div>`).join('');
-            if(cardList) cardList.innerHTML = (state.accounts || []).filter(a=>a.type==='tarjeta').map((a)=>`<div class="flex justify-between bg-slate-50 p-3 rounded-xl text-xs font-bold"><span>${a.name} (Día ${a.day})</span><button onclick="state.accounts.splice(${state.accounts.indexOf(a)},1);saveState();renderSettingsAccs()" class="text-red-400">ELIMINAR</button></div>`).join('');
+            if(accList) accList.innerHTML = (state.accounts || []).filter(a=>a.type==='banco').map((a)=>`<div class="flex justify-between bg-slate-50 p-3 rounded-xl text-xs font-bold"><span>${a.name}</span><button onclick="state.accounts.splice(${state.accounts.indexOf(a)},1);saveState();renderSettingsAccs()" class="text-red-400 font-bold">ELIMINAR</button></div>`).join('');
+            if(cardList) cardList.innerHTML = (state.accounts || []).filter(a=>a.type==='tarjeta').map((a)=>`<div class="flex justify-between bg-slate-50 p-3 rounded-xl text-xs font-bold"><span>${a.name} (Día ${a.day})</span><button onclick="state.accounts.splice(${state.accounts.indexOf(a)},1);saveState();renderSettingsAccs()" class="text-red-400 font-bold">ELIMINAR</button></div>`).join('');
         };
 
         function openModal() {
