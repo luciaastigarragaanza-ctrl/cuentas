@@ -21,11 +21,11 @@
 <body>
 
     <div id="login-view" class="min-h-screen flex flex-col items-center justify-center p-4">
-        <h1 class="text-4xl font-black mb-12 text-indigo-600 tracking-tighter uppercase">Cuentas Claras</h1>
+        <h1 class="text-4xl font-black mb-12 text-indigo-600 tracking-tighter uppercase text-center">Cuentas Claras</h1>
         <div id="user-selection-container" class="w-full max-w-sm space-y-4"></div>
     </div>
 
-    <div id="main-app-view" class="hidden">
+    <div id="main-app-view" style="display: none;">
         <div class="container mx-auto p-4 max-w-2xl pb-32">
             <header class="flex justify-between items-center mb-6">
                 <h2 id="welcome-header" class="text-xl font-bold"></h2>
@@ -51,7 +51,7 @@
                     <div class="bg-white p-6 rounded-[24px] shadow-sm border border-slate-100">
                         <p class="text-indigo-600 font-bold text-sm italic mb-4">Mis Cuentas y Bancos</p>
                         <div id="acc-list" class="space-y-2 mb-4"></div>
-                        <div class="flex gap-2"><input id="n-acc" placeholder="Ej: Efectivo" class="flex-1 bg-slate-50 rounded-xl px-4 h-11 text-sm border-none outline-none"><button onclick="addAcc('banco')" class="bg-indigo-600 text-white px-4 rounded-xl font-bold text-xs uppercase">Ok</button></div>
+                        <div class="flex gap-2"><input id="n-acc" placeholder="Ej: Santander" class="flex-1 bg-slate-50 rounded-xl px-4 h-11 text-sm border-none outline-none"><button onclick="addAcc('banco')" class="bg-indigo-600 text-white px-4 rounded-xl font-bold text-xs uppercase">Ok</button></div>
                     </div>
                     <div class="bg-white p-6 rounded-[24px] shadow-sm border border-slate-100">
                         <p class="text-indigo-600 font-bold text-sm italic mb-4">Tarjetas de Crédito</p>
@@ -71,7 +71,7 @@
         <nav id="bottom-nav-bar" class="bottom-nav flex justify-around py-3 text-slate-400 font-bold">
             <button data-view="transactions" class="nav-btn flex-1 text-center active"><svg class="w-5 h-5 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span class="text-[9px] uppercase">Diario</span></button>
             <button data-view="accounts" class="nav-btn flex-1 text-center"><svg class="w-5 h-5 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg><span class="text-[9px] uppercase">Cuentas</span></button>
-            <button data-view="joint" class="nav-btn flex-1 text-center"><svg class="w-5 h-5 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg><span class="text-[9px] uppercase text-xs">Pareja</span></button>
+            <button data-view="joint" class="nav-btn flex-1 text-center"><svg class="w-5 h-5 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg><span class="text-[9px] uppercase">Pareja</span></button>
             <button data-view="settings" class="nav-btn flex-1 text-center"><svg class="w-5 h-5 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg><span class="text-[9px] uppercase">Ajustes</span></button>
         </nav>
 
@@ -108,7 +108,8 @@
                         <input type="checkbox" id="f-shared" class="w-5 h-5 rounded border-none bg-indigo-100">
                     </div>
                 </div>
-                <button type="submit" id="f-submit" class="w-full bg-indigo-600 text-white font-black py-4 rounded-2xl shadow-lg mt-4 uppercase tracking-widest">Confirmar</button>
+                <button type="submit" id="f-submit" class="w-full bg-indigo-600 text-white font-black py-4 rounded-2xl shadow-lg mt-4 uppercase">Confirmar</button>
+                <button type="button" onclick="closeModal()" class="w-full text-gray-400 text-xs py-2 text-center uppercase font-bold">Cancelar</button>
             </form>
         </div>
     </div>
@@ -127,7 +128,8 @@
         let currentType = 'gasto';
 
         async function syncData() {
-            document.getElementById('sync-btn').innerText = "...";
+            const btn = document.getElementById('sync-btn');
+            if(btn) btn.innerText = "...";
             try {
                 const res = await fetch(SCRIPT_URL + '?action=getGastos');
                 const data = await res.json();
@@ -137,7 +139,7 @@
                 }));
                 saveState(); renderCurrentView();
             } catch (e) { console.error(e); }
-            document.getElementById('sync-btn').innerText = "SINCRONIZAR";
+            if(btn) btn.innerText = "SINCRONIZAR";
         }
 
         async function handleForm(e) {
@@ -172,7 +174,7 @@
 
             if (viewId === 'transactions') {
                 const content = document.getElementById('transactions-content'); content.innerHTML = '';
-                const vis = state.expenses.filter(e => e.shared || e.user === currentUser.name).sort((a,b)=>b.date - a.date);
+                const vis = (state.expenses || []).filter(e => e.shared || e.user === currentUser.name).sort((a,b)=>b.date - a.date);
                 vis.forEach(e => {
                     content.innerHTML += `<div class="bg-white p-4 rounded-2xl flex justify-between items-center shadow-sm border border-slate-50"><div><p class="font-bold text-sm text-slate-800">${e.desc}</p><p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">${e.account} · ${e.cat}</p></div><div class="text-right"><p class="font-black text-sm ${e.type==='ingreso'?'text-emerald-500':'text-slate-800'}">${e.type==='ingreso'?'+':'-'} $ ${e.amount.toFixed(0)}</p><p class="text-[7px] text-gray-300 font-bold uppercase">${e.date.toLocaleDateString()}</p></div></div>`;
                 });
@@ -180,8 +182,8 @@
 
             if (viewId === 'accounts') {
                 let capital = 0, aDeber = 0;
-                const accs = state.accounts.map(a => {
-                    const bal = state.expenses.filter(e => (e.user === currentUser.name) && (e.account === a.name || e.extra === a.name)).reduce((s,e) => {
+                const accs = (state.accounts || []).map(a => {
+                    const bal = (state.expenses || []).filter(e => (e.user === currentUser.name) && (e.account === a.name || e.extra === a.name)).reduce((s,e) => {
                         if (e.account === a.name) return s + (e.type === 'ingreso' ? e.amount : -e.amount);
                         if (e.extra === a.name && e.type === 'pago_tarjeta') return s + e.amount;
                         return s;
@@ -198,67 +200,100 @@
             }
 
             if (viewId === 'joint') {
-                const total = state.expenses.filter(e => e.shared && e.type === 'gasto' && e.date.getMonth() === (new Date()).getMonth()).reduce((s,e) => s + e.amount, 0);
+                const total = (state.expenses || []).filter(e => e.shared && e.type === 'gasto' && e.date.getMonth() === (new Date()).getMonth()).reduce((s,e) => s + e.amount, 0);
                 const disp = state.budget - total;
                 const perc = Math.min((total / state.budget) * 100, 100);
                 document.getElementById('joint-view').innerHTML = `<h1 class="text-2xl font-bold mb-6">Pareja</h1><div class="bg-white p-6 rounded-[32px] shadow-sm mb-6 border border-slate-50 text-slate-800"><h3 class="text-[10px] font-bold text-slate-400 uppercase mb-6 tracking-widest text-center">Presupuesto Mensual</h3><div class="grid grid-cols-2 gap-4 mb-6 text-center"><div class="p-4 bg-slate-50 rounded-2xl"><p class="text-[9px] font-bold text-slate-400 uppercase mb-1">Máximo</p><p class="text-xl font-black text-slate-700">$ ${state.budget}</p></div><div class="p-4 ${disp < 0 ? 'bg-red-50' : 'bg-emerald-50'} rounded-2xl"><p class="text-[9px] font-bold ${disp < 0 ? 'text-red-400' : 'text-emerald-500'} uppercase mb-1">Disponible</p><p class="text-xl font-black ${disp < 0 ? 'text-red-600' : 'text-emerald-600'}">$ ${disp.toFixed(0)}</p></div></div><div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden"><div class="bg-indigo-500 h-full transition-all duration-1000" style="width: ${perc}%"></div></div></div>`;
             }
 
             if (viewId === 'settings') {
-                document.getElementById('budget-in').value = state.budget;
+                const bIn = document.getElementById('budget-in');
+                if(bIn) bIn.value = state.budget;
                 renderSettingsAccs();
             }
         }
 
         window.setFormType = (t) => {
             currentType = t;
-            ['bt-gasto', 'bt-ingreso', 'bt-pago'].forEach(id => { document.getElementById(id).className = (id === `bt-${t.split('_')[0]}`) ? "flex-1 py-2 rounded-xl font-bold text-xs bg-indigo-600 text-white shadow-lg" : "flex-1 py-2 rounded-xl font-bold text-xs text-gray-400"; });
-            document.getElementById('pago-tarjeta-extra').classList.toggle('hidden', t !== 'pago_tarjeta');
+            ['bt-gasto', 'bt-ingreso', 'bt-pago'].forEach(id => { 
+                const el = document.getElementById(id);
+                if(el) el.className = (id === `bt-${t.split('_')[0]}`) ? "flex-1 py-2 rounded-xl font-bold text-xs bg-indigo-600 text-white shadow-lg" : "flex-1 py-2 rounded-xl font-bold text-xs text-gray-400"; 
+            });
+            const pExtra = document.getElementById('pago-tarjeta-extra');
+            if(pExtra) pExtra.classList.toggle('hidden', t !== 'pago_tarjeta');
         };
 
         window.addAcc = (type) => {
-            const name = document.getElementById(type === 'banco' ? 'n-acc' : 'n-card').value;
-            const day = type === 'tarjeta' ? document.getElementById('n-day').value : null;
-            if(name) { state.accounts.push({name, type, day}); saveState(); renderSettingsAccs(); document.getElementById(type === 'banco' ? 'n-acc' : 'n-card').value = ''; }
+            const nameEl = document.getElementById(type === 'banco' ? 'n-acc' : 'n-card');
+            const dayEl = document.getElementById('n-day');
+            const name = nameEl ? nameEl.value : '';
+            const day = type === 'tarjeta' && dayEl ? dayEl.value : null;
+            if(name) { 
+                if(!state.accounts) state.accounts = [];
+                state.accounts.push({name, type, day}); 
+                saveState(); renderSettingsAccs(); 
+                nameEl.value = ''; 
+                if(dayEl) dayEl.value = '';
+            }
         };
 
         window.renderSettingsAccs = () => {
-            document.getElementById('acc-list').innerHTML = state.accounts.filter(a=>a.type==='banco').map((a)=>`<div class="flex justify-between bg-slate-50 p-3 rounded-xl text-xs font-bold"><span>${a.name}</span><button onclick="state.accounts.splice(${state.accounts.indexOf(a)},1);saveState();renderSettingsAccs()" class="text-red-400">ELIMINAR</button></div>`).join('');
-            document.getElementById('card-list').innerHTML = state.accounts.filter(a=>a.type==='tarjeta').map((a)=>`<div class="flex justify-between bg-slate-50 p-3 rounded-xl text-xs font-bold"><span>${a.name} (Día ${a.day})</span><button onclick="state.accounts.splice(${state.accounts.indexOf(a)},1);saveState();renderSettingsAccs()" class="text-red-400">ELIMINAR</button></div>`).join('');
+            const accList = document.getElementById('acc-list');
+            const cardList = document.getElementById('card-list');
+            if(accList) accList.innerHTML = (state.accounts || []).filter(a=>a.type==='banco').map((a)=>`<div class="flex justify-between bg-slate-50 p-3 rounded-xl text-xs font-bold"><span>${a.name}</span><button onclick="state.accounts.splice(${state.accounts.indexOf(a)},1);saveState();renderSettingsAccs()" class="text-red-400">ELIMINAR</button></div>`).join('');
+            if(cardList) cardList.innerHTML = (state.accounts || []).filter(a=>a.type==='tarjeta').map((a)=>`<div class="flex justify-between bg-slate-50 p-3 rounded-xl text-xs font-bold"><span>${a.name} (Día ${a.day})</span><button onclick="state.accounts.splice(${state.accounts.indexOf(a)},1);saveState();renderSettingsAccs()" class="text-red-400">ELIMINAR</button></div>`).join('');
         };
 
         function openModal() {
-            document.getElementById('f-category').innerHTML = state.categories.map(c => `<option>${c}</option>`).join('');
-            document.getElementById('f-account').innerHTML = state.accounts.filter(a=>a.type==='banco').map(a => `<option>${a.name}</option>`).join('') + state.accounts.filter(a=>a.type==='tarjeta').map(a => `<option>${a.name}</option>`).join('');
-            document.getElementById('f-card-to-pay').innerHTML = state.accounts.filter(a=>a.type==='tarjeta').map(a => `<option>${a.name}</option>`).join('');
-            document.getElementById('add-modal').classList.add('active');
+            const fCat = document.getElementById('f-category');
+            const fAcc = document.getElementById('f-account');
+            const fCard = document.getElementById('f-card-to-pay');
+            if(fCat) fCat.innerHTML = (state.categories || []).map(c => `<option>${c}</option>`).join('');
+            if(fAcc) fAcc.innerHTML = (state.accounts || []).filter(a=>a.type==='banco').map(a => `<option>${a.name}</option>`).join('') + (state.accounts || []).filter(a=>a.type==='tarjeta').map(a => `<option>${a.name}</option>`).join('');
+            if(fCard) fCard.innerHTML = (state.accounts || []).filter(a=>a.type==='tarjeta').map(a => `<option>${a.name}</option>`).join('');
+            const modal = document.getElementById('add-modal');
+            if(modal) modal.classList.add('active');
             setFormType('gasto');
         }
 
-        function closeModal() { document.getElementById('add-modal').classList.remove('active'); document.getElementById('main-form').reset(); }
+        function closeModal() { 
+            const modal = document.getElementById('add-modal');
+            const form = document.getElementById('main-form');
+            if(modal) modal.classList.remove('active'); 
+            if(form) form.reset(); 
+        }
+
         function saveState() { localStorage.setItem('cc_state', JSON.stringify(state)); }
         function logout() { localStorage.clear(); location.reload(); }
         function renderCurrentView() { const active = document.querySelector('.nav-btn.active'); if(active) renderView(active.dataset.view); }
 
         document.addEventListener('DOMContentLoaded', () => {
             const uid = localStorage.getItem('cc_uid');
+            const loginView = document.getElementById('login-view');
+            const mainView = document.getElementById('main-app-view');
+            const userContainer = document.getElementById('user-selection-container');
+
             if (uid) {
-                currentUser = state.users.find(u => u.id == uid);
-                document.getElementById('welcome-header').innerText = "Hola, " + currentUser.name.split(' ')[0];
-                document.getElementById('main-app-view').classList.remove('hidden');
-                document.getElementById('login-view').classList.add('hidden');
+                currentUser = (state.users || INITIAL_DATA.users).find(u => u.id == uid);
+                const welcomeHeader = document.getElementById('welcome-header');
+                if(welcomeHeader) welcomeHeader.innerText = "Hola, " + currentUser.name.split(' ')[0];
+                if(mainView) mainView.style.display = 'block';
+                if(loginView) loginView.style.display = 'none';
                 syncData();
             } else {
-                state.users.forEach(u => {
-                    const b = document.createElement('button');
-                    b.className = "w-full bg-white p-6 rounded-2xl font-bold shadow-sm border border-slate-100 text-lg";
-                    b.innerText = u.name;
-                    b.onclick = () => { localStorage.setItem('cc_uid', u.id); location.reload(); };
-                    document.getElementById('user-selection-container').appendChild(b);
-                });
+                if(userContainer) {
+                    (state.users || INITIAL_DATA.users).forEach(u => {
+                        const b = document.createElement('button');
+                        b.className = "w-full bg-white p-6 rounded-2xl font-bold shadow-sm border border-slate-100 text-lg";
+                        b.innerText = u.name;
+                        b.onclick = () => { localStorage.setItem('cc_uid', u.id); location.reload(); };
+                        userContainer.appendChild(b);
+                    });
+                }
             }
             document.querySelectorAll('.nav-btn').forEach(b => b.onclick = () => renderView(b.dataset.view));
-            document.getElementById('main-form').onsubmit = handleForm;
+            const mainForm = document.getElementById('main-form');
+            if(mainForm) mainForm.onsubmit = handleForm;
         });
     </script>
 </body>
