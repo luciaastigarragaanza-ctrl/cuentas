@@ -6,120 +6,120 @@
     <title>Cuentas Claras</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #111827; color: white; -webkit-tap-highlight-color: transparent; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #1e293b; -webkit-tap-highlight-color: transparent; }
+        .dark-view { background-color: #1a1c24; color: white; min-height: 100vh; }
         .view { display: none; }
         .view.active { display: block; }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #1f2937; border-top: 1px solid #374151; z-index: 40; padding-bottom: env(safe-area-inset-bottom); }
-        .nav-btn.active { color: #818cf8; }
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 50; display: none; align-items: center; justify-content: center; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid #e2e8f0; z-index: 40; padding-bottom: env(safe-area-inset-bottom); }
+        .dark-nav { background: #1a1c24; border-top: 1px solid #2d313d; }
+        .nav-btn.active svg, .nav-btn.active span { color: #4f46e5; font-weight: bold; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 50; display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
         .modal-overlay.active { display: flex; }
-        input, select { background: #374151 !important; color: white !important; border: none !important; outline: none !important; }
     </style>
 </head>
 <body>
 
     <div id="login-view" class="min-h-screen flex flex-col items-center justify-center p-4">
-        <h1 class="text-3xl font-black mb-12 text-indigo-400 uppercase tracking-tighter">Cuentas Claras</h1>
-        <div id="user-selection-container" class="w-full max-w-sm space-y-3"></div>
+        <h1 class="text-4xl font-black mb-12 text-indigo-600 tracking-tighter uppercase">Cuentas Claras</h1>
+        <div id="user-selection-container" class="w-full max-w-sm space-y-4"></div>
     </div>
 
     <div id="main-app-view" class="hidden">
         <div class="container mx-auto p-4 max-w-2xl pb-32">
-            
+            <header class="flex justify-between items-center mb-6">
+                <h2 id="welcome-header" class="text-xl font-bold"></h2>
+                <button onclick="syncData()" id="sync-btn" class="text-[10px] bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded-full font-bold uppercase tracking-widest">Sincronizar</button>
+            </header>
+
             <div id="transactions-view" class="view active">
-                <div class="flex justify-between items-center mb-6">
-                    <h1 class="text-2xl font-bold">Diario</h1>
-                    <button onclick="syncData()" id="sync-btn" class="text-[10px] bg-indigo-900/50 text-indigo-400 px-3 py-1.5 rounded-full font-bold uppercase tracking-wider">Sincronizar</button>
-                </div>
-                <div id="transactions-content" class="space-y-1"></div>
+                <div class="flex border-b mb-6"><button class="flex-1 py-3 text-xs font-bold border-b-2 border-indigo-600 text-indigo-600 uppercase">Diario</button><button class="flex-1 py-3 text-xs font-bold text-gray-400 uppercase">Resumen</button></div>
+                <div id="transactions-content" class="space-y-3"></div>
             </div>
 
             <div id="accounts-view" class="view">
-                <h1 class="text-2xl font-bold mb-6 text-center">Cuentas</h1>
+                <h1 class="text-2xl font-bold mb-6">Cuentas</h1>
                 <div id="accounts-header-summary" class="grid grid-cols-3 gap-2 mb-8 text-center border-b border-gray-700 pb-4"></div>
                 <div id="accounts-list-content" class="space-y-6"></div>
             </div>
 
             <div id="joint-view" class="view"></div>
-            <div id="settings-view" class="view"></div>
+
+            <div id="settings-view" class="view">
+                <h1 class="text-2xl font-bold mb-6">Ajustes</h1>
+                <div class="space-y-6">
+                    <div class="bg-white p-6 rounded-[24px] shadow-sm border border-slate-100">
+                        <p class="text-indigo-600 font-bold text-sm italic mb-4">Mis Cuentas y Bancos</p>
+                        <div id="acc-list" class="space-y-2 mb-4"></div>
+                        <div class="flex gap-2"><input id="n-acc" placeholder="Ej: Efectivo" class="flex-1 bg-slate-50 rounded-xl px-4 h-11 text-sm border-none outline-none"><button onclick="addAcc('banco')" class="bg-indigo-600 text-white px-4 rounded-xl font-bold text-xs uppercase">Ok</button></div>
+                    </div>
+                    <div class="bg-white p-6 rounded-[24px] shadow-sm border border-slate-100">
+                        <p class="text-indigo-600 font-bold text-sm italic mb-4">Tarjetas de Crédito</p>
+                        <div id="card-list" class="space-y-2 mb-4"></div>
+                        <div class="grid grid-cols-2 gap-2"><input id="n-card" placeholder="Nombre" class="bg-slate-50 rounded-xl px-4 h-11 text-xs border-none outline-none"><input id="n-day" type="number" placeholder="Día Cierre" class="bg-slate-50 rounded-xl px-4 h-11 text-xs border-none outline-none"></div>
+                        <button onclick="addAcc('tarjeta')" class="w-full mt-2 bg-indigo-600 text-white py-3 rounded-xl font-bold text-xs uppercase">Añadir Tarjeta</button>
+                    </div>
+                    <div class="bg-white p-6 rounded-[24px] shadow-sm border border-slate-100">
+                        <p class="text-indigo-600 font-bold text-sm italic mb-4">Máximo Presupuesto Pareja</p>
+                        <input type="number" id="budget-in" onchange="state.budget=this.value;saveState();" class="w-full bg-slate-50 rounded-xl px-4 h-11 border-none font-bold text-slate-700 outline-none">
+                    </div>
+                    <button onclick="logout()" class="w-full text-red-400 font-bold py-4 bg-red-50 rounded-2xl uppercase text-[10px] tracking-widest">Cerrar Sesión</button>
+                </div>
+            </div>
         </div>
 
-        <nav class="bottom-nav flex justify-around py-3 text-gray-500">
-            <button data-view="transactions" class="nav-btn flex-1 active text-center">
-                <svg class="w-6 h-6 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                <span class="text-[10px] uppercase font-bold">Diario</span>
-            </button>
-            <button data-view="accounts" class="nav-btn flex-1 text-center">
-                <svg class="w-6 h-6 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
-                <span class="text-[10px] uppercase font-bold">Cuentas</span>
-            </button>
-            <button data-view="joint" class="nav-btn flex-1 text-center">
-                <svg class="w-6 h-6 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                <span class="text-[10px] uppercase font-bold">Pareja</span>
-            </button>
-            <button data-view="settings" class="nav-btn flex-1 text-center">
-                <svg class="w-6 h-6 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
-                <span class="text-[10px] uppercase font-bold">Ajustes</span>
-            </button>
+        <nav id="bottom-nav-bar" class="bottom-nav flex justify-around py-3 text-slate-400 font-bold">
+            <button data-view="transactions" class="nav-btn flex-1 text-center active"><svg class="w-5 h-5 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span class="text-[9px] uppercase">Diario</span></button>
+            <button data-view="accounts" class="nav-btn flex-1 text-center"><svg class="w-5 h-5 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg><span class="text-[9px] uppercase">Cuentas</span></button>
+            <button data-view="joint" class="nav-btn flex-1 text-center"><svg class="w-5 h-5 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg><span class="text-[9px] uppercase text-xs">Pareja</span></button>
+            <button data-view="settings" class="nav-btn flex-1 text-center"><svg class="w-5 h-5 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg><span class="text-[9px] uppercase">Ajustes</span></button>
         </nav>
 
-        <button onclick="openModal()" class="fixed bottom-24 right-5 bg-indigo-500 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center active:scale-90 transition-transform"><svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" d="M12 4v16m8-8H4"/></svg></button>
+        <button onclick="openModal()" class="fixed bottom-24 right-5 bg-indigo-600 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center active:scale-90 transition-transform font-bold text-3xl">+</button>
     </div>
 
     <div id="add-modal" class="modal-overlay">
-        <div class="bg-[#1f2937] w-full max-w-md m-4 p-6 rounded-[32px] shadow-2xl overflow-y-auto max-h-[90vh]">
-            <div class="flex gap-1 mb-6 p-1 bg-[#111827] rounded-2xl">
-                <button onclick="setFormType('gasto')" id="bt-gasto" class="flex-1 py-2 rounded-xl font-bold text-[10px] tracking-tighter">GASTO</button>
-                <button onclick="setFormType('ingreso')" id="bt-ingreso" class="flex-1 py-2 rounded-xl font-bold text-[10px] tracking-tighter">INGRESO</button>
-                <button onclick="setFormType('pago_tarjeta')" id="bt-pago" class="flex-1 py-2 rounded-xl font-bold text-[10px] tracking-tighter leading-none">PAGO<br>TARJETA</button>
+        <div class="bg-white w-full max-w-md m-4 p-6 rounded-[32px] shadow-2xl">
+            <div class="flex gap-2 mb-6 p-1 bg-slate-100 rounded-2xl">
+                <button onclick="setFormType('gasto')" id="bt-gasto" class="flex-1 py-2 rounded-xl font-bold text-xs uppercase">Gasto</button>
+                <button onclick="setFormType('ingreso')" id="bt-ingreso" class="flex-1 py-2 rounded-xl font-bold text-xs uppercase">Ingreso</button>
+                <button onclick="setFormType('pago_tarjeta')" id="bt-pago" class="flex-1 py-2 rounded-xl font-bold text-[10px] leading-none uppercase">Pago<br>Tarjeta</button>
             </div>
-            <form id="main-form" class="space-y-4">
-                <input type="hidden" id="f-index">
-                <input type="number" id="f-amount" placeholder="0.00" class="w-full rounded-2xl h-16 bg-[#111827] font-black text-4xl text-center border-none">
-                
-                <div id="row-cat-acc" class="grid grid-cols-2 gap-2">
-                    <select id="f-category" class="rounded-2xl h-12 px-4 bg-[#111827] text-sm"></select>
-                    <select id="f-account" class="rounded-2xl h-12 px-4 bg-[#111827] text-sm"></select>
-                </div>
-
-                <div id="pago-tarjeta-extra" class="hidden grid grid-cols-2 gap-2">
-                    <select id="f-card-to-pay" class="rounded-2xl h-12 px-4 bg-[#111827] text-sm"></select>
-                    <select id="f-bank-source" class="rounded-2xl h-12 px-4 bg-[#111827] text-sm"></select>
-                </div>
-
-                <input type="text" id="f-desc" placeholder="Descripción" class="w-full rounded-2xl h-12 px-4 bg-[#111827] text-sm">
-                
+            <form id="main-form" class="space-y-4 text-slate-800">
+                <input type="number" id="f-amount" placeholder="0.00" class="w-full rounded-2xl h-16 bg-slate-50 font-black text-4xl text-center border-none outline-none" required>
                 <div class="grid grid-cols-2 gap-2">
-                    <div class="bg-[#111827] p-3 rounded-2xl">
-                        <p class="text-[8px] font-bold text-gray-500 uppercase mb-1">Recurrencia</p>
-                        <select id="f-recurrence" class="w-full bg-transparent text-xs border-none p-0">
-                            <option value="No">No</option>
-                            <option value="Semanal">Semanal</option>
-                            <option value="Mensual">Mensual</option>
-                            <option value="Anual">Anual</option>
+                    <select id="f-category" class="rounded-2xl h-12 px-4 bg-slate-50 text-sm border-none"></select>
+                    <select id="f-account" class="rounded-2xl h-12 px-4 bg-slate-50 text-sm border-none"></select>
+                </div>
+                <div id="pago-tarjeta-extra" class="hidden space-y-2">
+                    <p class="text-[8px] font-bold text-gray-400 uppercase px-2">¿Qué tarjeta pagas?</p>
+                    <select id="f-card-to-pay" class="w-full rounded-2xl h-12 px-4 bg-slate-50 text-sm border-none"></select>
+                </div>
+                <input type="text" id="f-desc" placeholder="Descripción" class="w-full rounded-2xl h-12 px-4 bg-slate-50 text-sm border-none outline-none">
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="bg-slate-50 p-3 rounded-2xl">
+                        <p class="text-[8px] font-bold text-gray-400 uppercase mb-1">Recurrencia</p>
+                        <select id="f-recurrence" class="w-full bg-transparent text-xs border-none p-0 outline-none">
+                            <option value="No">No</option><option value="Semanal">Semanal</option><option value="Mensual">Mensual</option><option value="Anual">Anual</option>
                         </select>
                     </div>
-                    <div id="shared-box" class="bg-indigo-900/30 p-3 rounded-2xl flex items-center justify-between">
-                        <span class="text-[8px] font-bold text-indigo-400 uppercase">¿Compartir?</span>
-                        <input type="checkbox" id="f-shared" class="w-5 h-5 rounded border-none bg-indigo-900">
+                    <div class="bg-indigo-50 p-3 rounded-2xl flex items-center justify-between">
+                        <span class="text-[8px] font-bold text-indigo-400 uppercase">¿Compartido?</span>
+                        <input type="checkbox" id="f-shared" class="w-5 h-5 rounded border-none bg-indigo-100">
                     </div>
                 </div>
-
-                <button type="submit" id="f-submit" class="w-full bg-indigo-500 text-white font-black py-4 rounded-2xl shadow-lg mt-4 uppercase tracking-widest text-sm">Confirmar</button>
-                <button type="button" onclick="closeModal()" class="w-full text-gray-500 text-[10px] font-bold py-2 uppercase">Cancelar</button>
+                <button type="submit" id="f-submit" class="w-full bg-indigo-600 text-white font-black py-4 rounded-2xl shadow-lg mt-4 uppercase tracking-widest">Confirmar</button>
             </form>
         </div>
     </div>
 
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzNB4E2YV6JTkJAWHj2Q6fqmXOF7y717rRvjMVLvDQTrnfgyveZsuI1LrZwkXkNAUVwiw/exec';
-        
         const INITIAL_DATA = {
             users: [{id:1, name:'Lu Astigarraga'}, {id:2, name:'Bruno Velázquez'}],
-            categories: ['Alquiler', 'Super', 'Salidas', 'Transporte', 'Sueldo', 'Venta', 'Otros'],
+            categories: ['Super', 'Alquiler', 'Salidas', 'Salud', 'Transporte', 'Sueldo', 'Otros'],
             accounts: [{name: 'Efectivo', type: 'banco', day: null}],
-            expenses: [],
-            budget: 50000
+            expenses: [], budget: 50000
         };
 
         let state = JSON.parse(localStorage.getItem('cc_state')) || INITIAL_DATA;
@@ -135,8 +135,7 @@
                     id: i + 2, date: new Date(r[0]), desc: r[1], amount: parseFloat(r[2]),
                     cat: r[3], user: r[4], shared: r[5] === 'Sí', type: r[6], account: r[7], recurrence: r[8] || 'No', extra: r[9] || ''
                 }));
-                saveState();
-                renderCurrentView();
+                saveState(); renderCurrentView();
             } catch (e) { console.error(e); }
             document.getElementById('sync-btn').innerText = "SINCRONIZAR";
         }
@@ -144,147 +143,93 @@
         async function handleForm(e) {
             e.preventDefault();
             const btn = document.getElementById('f-submit');
-            const editId = document.getElementById('f-index').value;
-            btn.disabled = true; btn.innerText = "ENVIANDO...";
-
+            btn.disabled = true; btn.innerText = "ESPERE...";
             const payload = {
-                action: editId ? 'edit' : 'add', row: editId,
                 fecha: new Date().toLocaleDateString('es-ES'),
-                desc: currentType === 'pago_tarjeta' ? `Pago Tarjeta ${document.getElementById('f-card-to-pay').value}` : document.getElementById('f-desc').value,
+                desc: currentType === 'pago_tarjeta' ? `Pago ${document.getElementById('f-card-to-pay').value}` : document.getElementById('f-desc').value,
                 monto: parseFloat(document.getElementById('f-amount').value),
                 cat: document.getElementById('f-category').value,
-                quien: currentUser.name,
-                compartido: document.getElementById('f-shared').checked ? 'Sí' : 'No',
-                tipo: currentType,
-                cuenta: currentType === 'pago_tarjeta' ? document.getElementById('f-bank-source').value : document.getElementById('f-account').value,
+                quien: currentUser.name, compartido: document.getElementById('f-shared').checked ? 'Sí' : 'No',
+                tipo: currentType, cuenta: document.getElementById('f-account').value,
                 recurrencia: document.getElementById('f-recurrence').value,
                 extra: currentType === 'pago_tarjeta' ? document.getElementById('f-card-to-pay').value : ''
             };
-
             try {
                 await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
                 closeModal(); await syncData();
             } catch (e) { alert("Error"); }
-            btn.disabled = false; btn.innerText = "CONFIRMAR";
+            btn.disabled = false; btn.innerText = "Confirmar";
         }
 
         function renderView(viewId) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById(`${viewId}-view`).classList.add('active');
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.view === viewId));
-            const container = document.getElementById(`${viewId}-view`);
+            
+            const isDark = (viewId === 'accounts');
+            document.body.className = isDark ? 'dark-view' : '';
+            document.getElementById('bottom-nav-bar').className = isDark ? 'bottom-nav flex justify-around py-3 dark-nav' : 'bottom-nav flex justify-around py-3 text-slate-400 font-bold';
 
             if (viewId === 'transactions') {
-                const content = document.getElementById('transactions-content');
-                content.innerHTML = '';
+                const content = document.getElementById('transactions-content'); content.innerHTML = '';
                 const vis = state.expenses.filter(e => e.shared || e.user === currentUser.name).sort((a,b)=>b.date - a.date);
                 vis.forEach(e => {
-                    const color = e.type === 'ingreso' ? 'text-blue-400' : 'text-red-400';
-                    content.innerHTML += `
-                        <div class="flex justify-between items-center py-3 border-b border-gray-800">
-                            <div>
-                                <p class="text-xs font-bold">${e.desc}</p>
-                                <p class="text-[8px] text-gray-500 font-bold uppercase tracking-wider">${e.account} · ${e.cat}</p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-sm font-black ${color}">${e.type==='ingreso'?'+':''} ${e.amount.toFixed(2)}</p>
-                                <p class="text-[7px] text-gray-600 font-bold uppercase">${e.date.toLocaleDateString()}</p>
-                            </div>
-                        </div>`;
+                    content.innerHTML += `<div class="bg-white p-4 rounded-2xl flex justify-between items-center shadow-sm border border-slate-50"><div><p class="font-bold text-sm text-slate-800">${e.desc}</p><p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">${e.account} · ${e.cat}</p></div><div class="text-right"><p class="font-black text-sm ${e.type==='ingreso'?'text-emerald-500':'text-slate-800'}">${e.type==='ingreso'?'+':'-'} $ ${e.amount.toFixed(0)}</p><p class="text-[7px] text-gray-300 font-bold uppercase">${e.date.toLocaleDateString()}</p></div></div>`;
                 });
             }
 
             if (viewId === 'accounts') {
                 let capital = 0, aDeber = 0;
-                state.accounts.forEach(a => {
-                    const total = state.expenses.filter(e => e.account === a.name || e.extra === a.name).reduce((s,e) => {
+                const accs = state.accounts.map(a => {
+                    const bal = state.expenses.filter(e => (e.user === currentUser.name) && (e.account === a.name || e.extra === a.name)).reduce((s,e) => {
                         if (e.account === a.name) return s + (e.type === 'ingreso' ? e.amount : -e.amount);
                         if (e.extra === a.name && e.type === 'pago_tarjeta') return s + e.amount;
                         return s;
                     }, 0);
-                    if (a.type === 'banco') capital += total; else aDeber += total;
+                    if (a.type === 'banco') capital += bal; else aDeber += bal;
+                    return { ...a, bal };
                 });
 
-                document.getElementById('accounts-header-summary').innerHTML = `
-                    <div><p class="text-[8px] text-gray-500 font-bold uppercase">Capital</p><p class="text-xs font-bold text-blue-400">${capital.toFixed(2)}</p></div>
-                    <div><p class="text-[8px] text-gray-500 font-bold uppercase">A deber</p><p class="text-xs font-bold text-red-400">${aDeber.toFixed(2)}</p></div>
-                    <div><p class="text-[8px] text-gray-500 font-bold uppercase">Balance</p><p class="text-xs font-bold">${(capital+aDeber).toFixed(2)}</p></div>`;
-                
-                const list = document.getElementById('accounts-list-content'); list.innerHTML = '';
-                
-                // Bloque Bancos
-                list.innerHTML += `<div class="text-[10px] text-gray-500 font-bold uppercase tracking-widest border-b border-gray-800 pb-1">Bancos</div>`;
-                state.accounts.filter(a => a.type === 'banco').forEach(a => {
-                    const val = state.expenses.filter(e => e.account === a.name).reduce((s,e) => s + (e.type === 'ingreso' ? e.amount : -e.amount), 0);
-                    list.innerHTML += `<div class="flex justify-between py-2 text-sm"><span>${a.name}</span><span class="${val < 0 ? 'text-red-400' : 'text-blue-400'} font-bold">$ ${val.toFixed(2)}</span></div>`;
-                });
+                document.getElementById('accounts-header-summary').innerHTML = `<div><p class="text-[8px] text-gray-500 font-bold uppercase">Capital</p><p class="text-xs font-bold text-blue-400">${capital.toFixed(2)}</p></div><div><p class="text-[8px] text-gray-500 font-bold uppercase">A deber</p><p class="text-xs font-bold text-red-400">${Math.abs(aDeber).toFixed(2)}</p></div><div><p class="text-[8px] text-gray-500 font-bold uppercase">Balance</p><p class="text-xs font-bold text-white">${(capital + aDeber).toFixed(2)}</p></div>`;
+                const list = document.getElementById('accounts-list-content'); list.innerHTML = `<div class="text-[10px] text-gray-500 font-bold uppercase tracking-widest border-b border-gray-800 pb-1">Bancos</div>`;
+                accs.filter(a => a.type === 'banco').forEach(a => { list.innerHTML += `<div class="flex justify-between py-2 text-sm"><span>${a.name}</span><span class="${a.bal < 0 ? 'text-red-400' : 'text-blue-400'} font-bold">$ ${a.bal.toFixed(2)}</span></div>`; });
+                list.innerHTML += `<div class="mt-8 flex justify-between text-[10px] text-gray-500 font-bold uppercase tracking-widest border-b border-gray-800 pb-1"><span>Tarjetas</span><div class="flex gap-4"><span>Saldo a pagar</span><span>Saldo restante</span></div></div>`;
+                accs.filter(a => a.type === 'tarjeta').forEach(a => { list.innerHTML += `<div class="flex justify-between py-3"><div><p class="text-sm font-bold text-red-400">${a.name}</p><p class="text-[8px] text-gray-600 font-bold uppercase">Cierre el ${a.day}</p></div><div class="flex gap-10 text-xs font-bold"><span class="text-red-400">$ 0.00</span><span>$ ${Math.abs(a.bal).toFixed(2)}</span></div></div>`; });
+            }
 
-                // Bloque Tarjetas
-                list.innerHTML += `<div class="mt-8 flex justify-between text-[10px] text-gray-500 font-bold uppercase tracking-widest border-b border-gray-800 pb-1"><span>Tarjetas de crédito</span><div class="flex gap-4"><span>Saldo a pagar</span><span>Saldo restante</span></div></div>`;
-                state.accounts.filter(a => a.type === 'tarjeta').forEach(a => {
-                    const totalCard = state.expenses.filter(e => e.account === a.name || e.extra === a.name).reduce((s,e) => {
-                        if (e.account === a.name) return s - e.amount;
-                        if (e.extra === a.name && e.type === 'pago_tarjeta') return s + e.amount;
-                        return s;
-                    }, 0);
-                    list.innerHTML += `
-                        <div class="flex justify-between py-3">
-                            <span class="text-sm font-bold text-red-400">${a.name}</span>
-                            <div class="flex gap-6 text-xs font-bold">
-                                <span class="text-red-400">$ 0.00</span>
-                                <span>$ ${Math.abs(totalCard).toFixed(2)}</span>
-                            </div>
-                        </div>`;
-                });
+            if (viewId === 'joint') {
+                const total = state.expenses.filter(e => e.shared && e.type === 'gasto' && e.date.getMonth() === (new Date()).getMonth()).reduce((s,e) => s + e.amount, 0);
+                const disp = state.budget - total;
+                const perc = Math.min((total / state.budget) * 100, 100);
+                document.getElementById('joint-view').innerHTML = `<h1 class="text-2xl font-bold mb-6">Pareja</h1><div class="bg-white p-6 rounded-[32px] shadow-sm mb-6 border border-slate-50 text-slate-800"><h3 class="text-[10px] font-bold text-slate-400 uppercase mb-6 tracking-widest text-center">Presupuesto Mensual</h3><div class="grid grid-cols-2 gap-4 mb-6 text-center"><div class="p-4 bg-slate-50 rounded-2xl"><p class="text-[9px] font-bold text-slate-400 uppercase mb-1">Máximo</p><p class="text-xl font-black text-slate-700">$ ${state.budget}</p></div><div class="p-4 ${disp < 0 ? 'bg-red-50' : 'bg-emerald-50'} rounded-2xl"><p class="text-[9px] font-bold ${disp < 0 ? 'text-red-400' : 'text-emerald-500'} uppercase mb-1">Disponible</p><p class="text-xl font-black ${disp < 0 ? 'text-red-600' : 'text-emerald-600'}">$ ${disp.toFixed(0)}</p></div></div><div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden"><div class="bg-indigo-500 h-full transition-all duration-1000" style="width: ${perc}%"></div></div></div>`;
             }
 
             if (viewId === 'settings') {
-                container.innerHTML = `
-                    <h1 class="text-2xl font-black mb-6">Ajustes</h1>
-                    <div class="bg-[#1f2937] p-6 rounded-[24px] mb-4">
-                        <p class="text-[10px] font-bold text-indigo-400 uppercase mb-4">Cuentas Bancarias / Efectivo</p>
-                        <div id="acc-list" class="space-y-2 mb-4"></div>
-                        <div class="flex gap-2"><input id="n-acc" placeholder="Nombre" class="flex-1 rounded-xl px-4 h-10 text-xs"><button onclick="addAcc('banco')" class="bg-indigo-500 text-white px-4 rounded-xl font-bold text-xs uppercase">Añadir</button></div>
-                    </div>
-                    <div class="bg-[#1f2937] p-6 rounded-[24px] mb-4">
-                        <p class="text-[10px] font-bold text-indigo-400 uppercase mb-4">Tarjetas de Crédito</p>
-                        <div id="card-list" class="space-y-2 mb-4"></div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <input id="n-card" placeholder="Nombre" class="rounded-xl px-4 h-10 text-xs">
-                            <div class="flex gap-2"><input id="n-day" type="number" placeholder="Día Cierre" class="flex-1 rounded-xl px-4 h-10 text-xs"><button onclick="addAcc('tarjeta')" class="bg-indigo-500 text-white px-3 rounded-xl font-bold text-xs uppercase">OK</button></div>
-                        </div>
-                    </div>
-                    <button onclick="logout()" class="w-full text-red-400 font-bold p-4 bg-red-900/20 rounded-2xl uppercase text-[10px] tracking-widest mt-8">Cerrar Sesión</button>`;
+                document.getElementById('budget-in').value = state.budget;
                 renderSettingsAccs();
             }
         }
 
         window.setFormType = (t) => {
             currentType = t;
-            ['bt-gasto', 'bt-ingreso', 'bt-pago'].forEach(id => {
-                const prefix = id.split('-')[1];
-                document.getElementById(id).className = t.startsWith(prefix) ? "flex-1 py-2 rounded-xl font-bold bg-indigo-500 text-white shadow-lg" : "flex-1 py-2 rounded-xl font-bold text-gray-500";
-            });
+            ['bt-gasto', 'bt-ingreso', 'bt-pago'].forEach(id => { document.getElementById(id).className = (id === `bt-${t.split('_')[0]}`) ? "flex-1 py-2 rounded-xl font-bold text-xs bg-indigo-600 text-white shadow-lg" : "flex-1 py-2 rounded-xl font-bold text-xs text-gray-400"; });
             document.getElementById('pago-tarjeta-extra').classList.toggle('hidden', t !== 'pago_tarjeta');
-            document.getElementById('row-cat-acc').classList.toggle('hidden', t === 'pago_tarjeta');
-            document.getElementById('shared-box').style.display = t === 'ingreso' ? 'none' : 'flex';
         };
 
         window.addAcc = (type) => {
             const name = document.getElementById(type === 'banco' ? 'n-acc' : 'n-card').value;
             const day = type === 'tarjeta' ? document.getElementById('n-day').value : null;
-            if(name) { state.accounts.push({name, type, day}); saveState(); renderSettingsAccs(); }
+            if(name) { state.accounts.push({name, type, day}); saveState(); renderSettingsAccs(); document.getElementById(type === 'banco' ? 'n-acc' : 'n-card').value = ''; }
         };
 
         window.renderSettingsAccs = () => {
-            document.getElementById('acc-list').innerHTML = state.accounts.filter(a=>a.type==='banco').map((a,i)=>`<div class="flex justify-between bg-[#111827] p-3 rounded-xl text-xs font-bold"><span>${a.name}</span><button onclick="state.accounts.splice(${state.accounts.indexOf(a)},1);saveState();renderSettingsAccs()" class="text-red-400">X</button></div>`).join('');
-            document.getElementById('card-list').innerHTML = state.accounts.filter(a=>a.type==='tarjeta').map((a,i)=>`<div class="flex justify-between bg-[#111827] p-3 rounded-xl text-xs font-bold"><span>${a.name} (Cierra: ${a.day})</span><button onclick="state.accounts.splice(${state.accounts.indexOf(a)},1);saveState();renderSettingsAccs()" class="text-red-400">X</button></div>`).join('');
+            document.getElementById('acc-list').innerHTML = state.accounts.filter(a=>a.type==='banco').map((a)=>`<div class="flex justify-between bg-slate-50 p-3 rounded-xl text-xs font-bold"><span>${a.name}</span><button onclick="state.accounts.splice(${state.accounts.indexOf(a)},1);saveState();renderSettingsAccs()" class="text-red-400">ELIMINAR</button></div>`).join('');
+            document.getElementById('card-list').innerHTML = state.accounts.filter(a=>a.type==='tarjeta').map((a)=>`<div class="flex justify-between bg-slate-50 p-3 rounded-xl text-xs font-bold"><span>${a.name} (Día ${a.day})</span><button onclick="state.accounts.splice(${state.accounts.indexOf(a)},1);saveState();renderSettingsAccs()" class="text-red-400">ELIMINAR</button></div>`).join('');
         };
 
         function openModal() {
             document.getElementById('f-category').innerHTML = state.categories.map(c => `<option>${c}</option>`).join('');
-            document.getElementById('f-account').innerHTML = state.accounts.map(a => `<option>${a.name}</option>`).join('');
-            document.getElementById('f-bank-source').innerHTML = state.accounts.filter(a=>a.type==='banco').map(a => `<option>${a.name}</option>`).join('');
+            document.getElementById('f-account').innerHTML = state.accounts.filter(a=>a.type==='banco').map(a => `<option>${a.name}</option>`).join('') + state.accounts.filter(a=>a.type==='tarjeta').map(a => `<option>${a.name}</option>`).join('');
             document.getElementById('f-card-to-pay').innerHTML = state.accounts.filter(a=>a.type==='tarjeta').map(a => `<option>${a.name}</option>`).join('');
             document.getElementById('add-modal').classList.add('active');
             setFormType('gasto');
@@ -306,7 +251,7 @@
             } else {
                 state.users.forEach(u => {
                     const b = document.createElement('button');
-                    b.className = "w-full bg-[#1f2937] p-6 rounded-2xl font-bold shadow-sm border border-gray-700 text-lg active:scale-95 transition-transform";
+                    b.className = "w-full bg-white p-6 rounded-2xl font-bold shadow-sm border border-slate-100 text-lg";
                     b.innerText = u.name;
                     b.onclick = () => { localStorage.setItem('cc_uid', u.id); location.reload(); };
                     document.getElementById('user-selection-container').appendChild(b);
